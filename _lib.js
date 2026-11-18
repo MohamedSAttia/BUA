@@ -11,7 +11,7 @@ async function put(p, data, o = {}) { if (!LOCAL()) return _put(p, data, o); con
 async function get(p, o = {}) { if (!LOCAL()) return _get(p, o); const f = lpath(p); if (!fs.existsSync(f)) return null; const b = fs.readFileSync(f); return { stream: new Blob([b]).stream(), blob: { etag: String(fs.statSync(f).mtimeMs), contentType: fs.existsSync(f + '.type') ? fs.readFileSync(f + '.type', 'utf8') : null } }; }
 async function del(p) { if (!LOCAL()) return _del(p); }
 
-export const COLS = ['tasks','requests','messages','notifications','standups','activities','meetings','kpis','accounts','settings','deanReports','letters','evidence','courses','surveys','theses','advising','archive','files'];
+export const COLS = ['tasks','requests','messages','notifications','standups','activities','meetings','kpis','accounts','settings','deanReports','letters','evidence','courses','surveys','theses','advising','archive','circulars','cmeetings','presence','mposts','files'];
 const SECRET = () => process.env.AUTH_SECRET || process.env.BLOB_READ_WRITE_TOKEN || 'dev-secret';
 
 // ---------- http ----------
