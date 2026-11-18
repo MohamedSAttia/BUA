@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { body, send, sign, session, hashPw, checkPw, readOne, readCol, writeDoc } from './_lib.js';
+import { body, send, sign, session, hashPw, checkPw, readOne, readCol, writeDoc, backend } from './_lib.js';
 const FIXED_RE = /^(head|dean|fac|stu[0-9]|ch_[a-z]+)$/;
 const attempts = new Map();
 const cookieHdr = (t, maxAge) => `bua_t=${t}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
@@ -13,6 +13,7 @@ async function resolveUser(u) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return send(res, 405, { error: 'method' });
   const b = await body(req); const ip = req.headers['x-forwarded-for'] || 'x';
+  if (!backend() && b.action !== 'logout') return send(res, 503, { error: 'no_storage' });
   try {
     if (b.action === 'login') {
       const k = ip + '|' + b.user; const n = attempts.get(k) || 0; if (n > 8) return send(res, 429, { error: 'too_many' });
