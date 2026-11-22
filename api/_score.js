@@ -61,6 +61,19 @@ export async function handle(store, hp, sessId, act, b) {
   if (!me || me.active === false) return { status: 401, body: { error: 'auth' } };
 
   if (act === 'boot') {
+    // upgrade data from the earlier version and load the demo once when the store is empty
+    const MAP = { 'جديد': 'عند رئيس القسم', 'قيد الدراسة': 'عند العميد' };
+    for (const r of await store.readCol('s_req')) if (MAP[r.status]) {
+      const st = MAP[r.status]; const hist = [{ s: 'تقديم الطلب', by: r.by, at: r.at || Date.now() }, { s: 'عند رئيس القسم', by: r.by, at: (r.at || Date.now()) + 3e5 }];
+      if (st === 'عند العميد') hist.push({ s: 'عند العميد', by: r.by, at: (r.at || Date.now()) + 864e5 });
+      await store.writeDoc('s_req', r.id, { ...r, status: st, hist });
+    }
+    const meta = await store.readOne('s_meta', 'demo');
+    if (!meta && me.admin) {
+      const [rq, tk] = [await store.readCol('s_req'), await store.readCol('s_task')];
+      if (!rq.length && !tk.length) await seed(store, me.id);
+      await store.writeDoc('s_meta', 'demo', { id: 'demo', at: Date.now() });
+    }
     const out = { me: pub(me), mods: MODS, presets: Object.fromEntries(Object.entries(PRESETS).map(([k, v]) => [k, v.n])) };
     for (const [m, c] of Object.entries(COL)) if (can(me, m, 'v') || (m === 'task')) {
       let docs = await store.readCol(c);
