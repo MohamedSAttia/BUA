@@ -10,5 +10,5 @@ http.createServer(async (req, res) => {
     if (!fs.existsSync(f) || name.startsWith('_')) { res.statusCode = 404; return res.end('{}'); }
     try { const m = await import('file://' + f); return await m.default(req, res); } catch (e) { console.error(e); res.statusCode = 500; return res.end(JSON.stringify({ error: String(e) })); }
   }
-  res.setHeader('Content-Type', 'text/html; charset=utf-8'); res.end(fs.readFileSync('index.html'));
+  res.setHeader('Content-Type', 'text/html; charset=utf-8'); res.end(fs.readFileSync(u.pathname.startsWith('/full') ? 'full/index.html' : 'index.html'));
 }).listen(PORT, () => console.log('BUA dev server on http://localhost:' + PORT));

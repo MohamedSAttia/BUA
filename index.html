@@ -1,152 +1,482 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>نظام إدارة القسم</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصة متابعة القسم</title>
+<meta name="srv" content="1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f6fa;--card:#fff;--tx:#1b2433;--mu:#66738a;--bd:#e1e6ef;--pr:#1f4e8c;--prt:#fff;--ok:#1e8a5a;--wn:#b7791f;--dn:#c0392b;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f141c;--card:#18202c;--tx:#e8edf5;--mu:#93a1b8;--bd:#2a3546;--pr:#5b9bf0;--prt:#0b1220;--ok:#4cc38a;--wn:#e0b25a;--dn:#ef7b6e;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0f141c;--card:#18202c;--tx:#e8edf5;--mu:#93a1b8;--bd:#2a3546;--pr:#5b9bf0;--prt:#0b1220;--ok:#4cc38a;--wn:#e0b25a;--dn:#ef7b6e;color-scheme:dark}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 "Segoe UI",Tahoma,system-ui,sans-serif}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 20px;background:var(--card);border-bottom:1px solid var(--bd)}
-h1{margin:0;font-size:20px}h2{margin:0 0 10px;font-size:17px}h3{margin:0 0 12px}
-.mu,small{color:var(--mu)}
-.who{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mu)}
-select,input,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;max-width:100%}
-textarea{width:100%;min-height:80px}
-nav{display:flex;gap:6px;padding:10px 20px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--bd)}
-nav button{white-space:nowrap;border:0;background:transparent;color:var(--mu);font:inherit;font-weight:600;padding:8px 14px;border-radius:20px;cursor:pointer}
-nav button.on{background:var(--pr);color:var(--prt)}
-main{padding:20px;max-width:1000px;margin:0 auto}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:14px}
-.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:12px}
-.st{text-align:center;margin:0}.st b{display:block;font-size:30px;color:var(--pr)}.st span{color:var(--mu);font-size:13px}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.top h2{margin:0}
-.row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}.row:last-child{border:0}
-.b{border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:600;padding:7px 14px;border-radius:9px;cursor:pointer}
-.b.p{background:var(--pr);color:var(--prt);border-color:var(--pr)}
-.s{border:1px solid var(--bd);background:transparent;color:var(--pr);font:inherit;font-size:13px;padding:3px 10px;border-radius:7px;cursor:pointer}
-.s.x{color:var(--dn)}
-.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.chip{display:inline-block;background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:1px 10px;margin:2px;font-size:13px}
-.chip.on{background:var(--pr);color:var(--prt);border-color:var(--pr);cursor:pointer}.chip{cursor:default}
-.tag{font-size:12px;padding:2px 10px;border-radius:12px;font-weight:700}
-.todo{background:rgba(120,130,150,.18);color:var(--mu)}.doing{background:rgba(183,121,31,.18);color:var(--wn)}.done{background:rgba(30,138,90,.18);color:var(--ok)}
-table{width:100%;border-collapse:collapse}th,td{padding:8px;text-align:center;border-bottom:1px solid var(--bd)}th:first-child,td:first-child{text-align:start}
-input[type=checkbox]{width:18px;height:18px;padding:0}
-#ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}#ov[hidden]{display:none}
-.md{background:var(--card);border-radius:14px;padding:20px;width:min(480px,100%);max-height:90vh;overflow:auto}
-.md label{display:block;margin-bottom:10px;font-weight:600;font-size:13px}.md input,.md select{width:100%;margin-top:4px}
-.md label.ck{font-weight:400;display:inline-flex;gap:6px;align-items:center;margin:2px 8px 2px 0}.md label.ck input{width:auto;margin:0}
-.bar{display:flex;gap:8px;margin-top:14px}
-footer{text-align:center;color:var(--mu);font-size:12px;padding:20px}
-.scroll{overflow-x:auto}
+:root{--bg:#F4F6FA;--card:#fff;--ink:#14213D;--ink2:#4A5672;--mute:#8A94AA;--line:#E3E7EF;--pri:#1F4E8C;--pri2:#2E6BC0;--priL:#E8F0FB;--ok:#1E8E5A;--okL:#E3F5EC;--warn:#B7791F;--warnL:#FDF3E1;--bad:#C0392B;--badL:#FBE9E7;--r:14px;--sh:0 1px 2px rgba(20,33,61,.05),0 4px 16px rgba(20,33,61,.06)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:"IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.6}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--pri2)}
+.hide{display:none!important}
+/* login */
+.login{min-height:100%;display:grid;grid-template-columns:1.1fr 1fr}
+.login .side{background:linear-gradient(160deg,#16325C,#1F4E8C 55%,#2E6BC0);color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.login .side h1{font-size:34px;line-height:1.35;margin:0 0 14px}.login .side p{opacity:.85;font-size:16px;max-width:460px;margin:0 0 28px}
+.login .side ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}.login .side li{display:flex;gap:10px;align-items:center;opacity:.92}
+.login .side li i{width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-style:normal}
+.login .side:after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;border:60px solid rgba(255,255,255,.05);inset-inline-start:-160px;bottom:-200px}
+.login form{align-self:center;justify-self:center;width:min(380px,90%);display:grid;gap:14px}
+.login form h2{margin:0;font-size:24px}.login form p{margin:0;color:var(--ink2)}
+.f label{display:block;font-size:13px;color:var(--ink2);margin-bottom:6px;font-weight:600}
+.in{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;outline:none;transition:border .15s,box-shadow .15s}
+.in:focus{border-color:var(--pri2);box-shadow:0 0 0 3px rgba(46,107,192,.15)}
+textarea.in{min-height:90px;resize:vertical}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:600;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:#c9d1e0;background:#FAFBFD}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}.btn.pri:hover{background:var(--pri2)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}.btn.bad{background:#fff;border-color:#f0c4bd;color:var(--bad)}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}.btn.lg{padding:12px 18px;font-size:15px}
+.btn.ghost{background:transparent;border-color:transparent}.btn.ghost:hover{background:var(--priL)}
+.err{color:var(--bad);font-size:13px;min-height:18px}
+.demo-note{background:var(--warnL);color:#7a520f;border-radius:10px;padding:10px 12px;font-size:13px}
+/* shell */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100%}
+.nav{background:#fff;border-inline-end:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+.brand{font-weight:700;font-size:16px;padding:6px 10px 18px;line-height:1.4}.brand small{display:block;color:var(--mute);font-weight:500;font-size:12px}
+.nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--ink2);text-decoration:none;font-weight:600;cursor:pointer}
+.nav a:hover{background:var(--bg)}.nav a.on{background:var(--priL);color:var(--pri)}
+.nav a .cnt{margin-inline-start:auto;background:var(--bad);color:#fff;border-radius:20px;font-size:11px;padding:0 7px;line-height:18px}
+.nav .sep{height:1px;background:var(--line);margin:10px 6px}
+.nav .foot{margin-top:auto;font-size:11.5px;color:var(--mute);padding:10px;line-height:1.6}
+.ico{width:18px;height:18px;flex:none}
+.main{min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:12px;padding:14px 28px;background:rgba(244,246,250,.85);backdrop-filter:blur(8px);position:sticky;top:0;z-index:5}
+.top h1{font-size:20px;margin:0}.top .sp{flex:1}
+.bell{position:relative}.bell .dot{position:absolute;top:2px;inset-inline-end:2px;background:var(--bad);color:#fff;font-size:10.5px;border-radius:10px;padding:0 5px;line-height:16px;font-weight:700}
+.who{display:flex;align-items:center;gap:9px;padding:5px 10px 5px 5px;border-radius:30px;background:#fff;border:1px solid var(--line);cursor:pointer}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.who b{font-size:13px;display:block;line-height:1.2}.who small{font-size:11px;color:var(--mute)}
+.page{padding:6px 28px 40px;max-width:1280px;width:100%}
+.menu-btn{display:none}
+/* cards & grid */
+.grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}.g21{grid-template-columns:2fr 1fr}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px}
+.card h3{margin:0 0 12px;font-size:15.5px;display:flex;align-items:center;gap:8px}.card h3 .sp{flex:1}
+.tile{display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform .15s}.tile:hover{transform:translateY(-2px)}
+.tile .ti{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;flex:none}
+.tile .n{font-size:26px;font-weight:700;line-height:1.1}.tile .l{color:var(--ink2);font-size:13px}
+.hello{display:flex;align-items:flex-end;gap:12px;margin:6px 0 18px}.hello h2{margin:0;font-size:22px}.hello p{margin:0;color:var(--ink2)}
+.muted{color:var(--mute)}.small{font-size:12.5px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.list{display:flex;flex-direction:column}
+.li{display:flex;gap:12px;align-items:center;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}.li:last-child{border-bottom:0}.li:hover{background:#FAFBFD}
+.li .t{flex:1;min-width:0}.li .t b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.li .t small{color:var(--mute)}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-new{background:var(--priL);color:var(--pri)}.p-wait{background:var(--warnL);color:var(--warn)}.p-ok{background:var(--okL);color:var(--ok)}.p-bad{background:var(--badL);color:var(--bad)}.p-gray{background:#EEF1F6;color:var(--ink2)}
+.bar{height:8px;background:#EDF0F5;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;border-radius:6px;background:var(--pri2)}
+.empty{text-align:center;color:var(--mute);padding:30px 10px}
+/* toolbar & table */
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink2)}.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.search{flex:1;min-width:180px;max-width:320px}
+table{width:100%;border-collapse:collapse}th{font-size:12.5px;color:var(--mute);font-weight:600;text-align:start;padding:10px;border-bottom:1px solid var(--line)}
+td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}tr.click{cursor:pointer}tr.click:hover td{background:#FAFBFD}
+.tbl{overflow-x:auto}
+/* kanban */
+.kan{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.col{background:#EBEEF4;border-radius:var(--r);padding:12px}.col h4{margin:2px 4px 10px;font-size:14px;display:flex;gap:8px;align-items:center}
+.kc{background:#fff;border-radius:11px;padding:12px;margin-bottom:10px;box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:pointer;border-inline-start:3px solid transparent}
+.kc.late{border-inline-start-color:var(--bad)}.kc b{display:block;margin-bottom:6px}.kc .row{justify-content:space-between}
+/* kpi */
+.kpi .big{font-size:28px;font-weight:700}.kpi .tg{color:var(--mute);font-size:13px}
+/* modal & drawer */
+.ov{position:fixed;inset:0;background:rgba(20,33,61,.35);z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;animation:fd .15s}
+.md{background:#fff;border-radius:16px;width:min(640px,100%);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:up .18s}
+.md.wide{width:min(900px,100%)}
+.md .hd{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.md .hd h3{margin:0;font-size:17px;flex:1}
+.md .bd{padding:18px 20px;overflow:auto}.md .ft{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-start;flex-wrap:wrap}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}.fg .full{grid-column:1/-1}
+@keyframes fd{from{opacity:0}}@keyframes up{from{transform:translateY(12px);opacity:0}}
+.pop{position:absolute;top:58px;inset-inline-end:28px;width:min(380px,92vw);background:#fff;border-radius:14px;box-shadow:0 14px 40px rgba(20,33,61,.18);z-index:15;overflow:hidden;animation:up .15s}
+.pop .hd{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}.pop .hd b{flex:1}
+.pop .bd{max-height:420px;overflow:auto}
+.nt{display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer}.nt:hover{background:#FAFBFD}.nt.unread{background:#F5F8FE}
+.nt .dt{width:8px;height:8px;border-radius:50%;background:var(--pri2);margin-top:8px;flex:none}.nt:not(.unread) .dt{background:transparent}
+.nt small{color:var(--mute);display:block}
+.toast{position:fixed;bottom:22px;inset-inline-start:50%;transform:translateX(50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;z-index:40;box-shadow:var(--sh);animation:up .2s}
+html[dir=rtl] .toast{transform:translateX(50%)}
+/* permission matrix */
+.mx{width:100%}.mx th,.mx td{text-align:center;padding:9px 6px}.mx td:first-child,.mx th:first-child{text-align:start}
+.mx input{width:18px;height:18px;accent-color:var(--pri)}
+.tl{border-inline-start:2px solid var(--line);padding-inline-start:14px;margin-inline-start:6px}.tl div{position:relative;padding:4px 0 10px}.tl div:before{content:"";position:absolute;inset-inline-start:-20px;top:10px;width:10px;height:10px;border-radius:50%;background:var(--pri2)}
+.sw{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2)}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:5px}
+.stack{display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;background:#fff}
+.stack i{display:block;height:100%}
+@media print{.nav,.top,.noprint{display:none!important}.app{display:block}.page{padding:0}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
+@media(max-width:980px){.g4{grid-template-columns:repeat(2,1fr)}.g3,.g21{grid-template-columns:1fr}.kan{grid-template-columns:1fr}}
+@media(max-width:760px){.login{grid-template-columns:1fr}.login .side{padding:32px 24px}.login .side h1{font-size:24px}.login .side ul{display:none}
+ .app{grid-template-columns:1fr}.nav{position:fixed;inset-block:0;inset-inline-start:0;width:250px;z-index:30;transform:translateX(100%);transition:.2s;box-shadow:var(--sh)}
+ html[dir=rtl] .nav{transform:translateX(100%)}.nav.open{transform:none!important}.menu-btn{display:inline-flex}
+ .top{padding:12px 14px}.page{padding:6px 14px 30px}.g2,.fg{grid-template-columns:1fr}.who div{display:none}.pop{inset-inline-end:10px}}
 </style>
 </head>
 <body>
-<div id="app"></div>
-<div id="ov" hidden></div>
+<div id="root"></div>
+<script>// Shared core for the simplified system — used by the server (api/s.js) and by the in-browser demo store.
+const MODS = [
+  { k: 'req', n: 'الطلبات والمعاملات', ap: true },
+  { k: 'task', n: 'المهام والمتابعة' },
+  { k: 'dec', n: 'القرارات والتعاميم' },
+  { k: 'kpi', n: 'مؤشرات الأداء' },
+  { k: 'rep', n: 'التقارير', viewOnly: true }
+];
+const PRESETS = {
+  full: { n: 'صلاحيات كاملة', p: () => Object.fromEntries(MODS.map(m => [m.k, { v: 1, a: m.viewOnly ? 0 : 1, e: m.viewOnly ? 0 : 1, d: m.viewOnly ? 0 : 1, ap: m.ap ? 1 : 0 }])) },
+  lead: { n: 'قيادي (عميد / رئيس قسم)', p: () => Object.fromEntries(MODS.map(m => [m.k, { v: 1, a: m.viewOnly ? 0 : 1, e: m.viewOnly ? 0 : 1, d: 0, ap: m.ap ? 1 : 0 }])) },
+  staff: { n: 'موظف / عضو', p: () => ({ req: { v: 1, a: 1, e: 0, d: 0, ap: 0 }, task: { v: 1, a: 0, e: 1, d: 0 }, dec: { v: 1, a: 0, e: 0, d: 0 }, kpi: { v: 1, a: 0, e: 0, d: 0 }, rep: { v: 0 } }) },
+  view: { n: 'اطلاع فقط', p: () => Object.fromEntries(MODS.map(m => [m.k, { v: m.k === 'rep' ? 0 : 1, a: 0, e: 0, d: 0, ap: 0 }])) }
+};
+const COL = { req: 's_req', task: 's_task', dec: 's_dec', kpi: 's_kpi' };
+const ADMIN_ID = 'khaled';
+const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clean = (s, n = 400) => String(s ?? '').slice(0, n);
+const can = (u, mod, p) => !!(u && u.active !== false && (u.admin || u.perms?.[mod]?.[p]));
+const pub = u => u && ({ id: u.id, name: u.name, title: u.title || '', email: u.email || '', admin: !!u.admin, active: u.active !== false, perms: u.perms || {}, preset: u.preset || '' });
+
+const FIELDS = {
+  req: ['title', 'type', 'applicant', 'details', 'status', 'due', 'priority', 'note'],
+  task: ['title', 'owner', 'due', 'status', 'priority', 'details', 'progress'],
+  dec: ['title', 'no', 'date', 'until', 'body', 'audience'],
+  kpi: ['name', 'target', 'actual', 'unit', 'period', 'better', 'owner']
+};
+
+async function notify(store, to, text, mod, ref) {
+  for (const t of [...new Set(to)].filter(Boolean)) {
+    const id = rid(); await store.writeDoc('s_notif', id, { id, to: t, text: clean(text, 200), mod, ref, at: Date.now(), read: false });
+  }
+}
+async function log(store, by, act, mod, ref, title) { const id = rid(); await store.writeDoc('s_log', id, { id, by, act, mod, ref, title: clean(title, 120), at: Date.now() }); }
+
+async function ensureAdmin(store, hp, adminPw) {
+  const u = await store.readOne('s_users', ADMIN_ID);
+  if (u) return u;
+  if (!adminPw) return null;
+  const doc = { id: ADMIN_ID, name: 'د. خالد البلوي', title: 'مدير النظام', email: '', admin: true, active: true, perms: PRESETS.full.p(), preset: 'full', at: Date.now() };
+  await store.writeDoc('s_users', ADMIN_ID, doc);
+  await store.writeDoc('_s_auth', ADMIN_ID, { id: ADMIN_ID, ...(await hp.hash(adminPw)) });
+  return doc;
+}
+
+async function handle(store, hp, sessId, act, b) {
+  b = b || {};
+  if (act === 'login') {
+    const id = clean(b.user, 60).trim().toLowerCase();
+    let u = await store.readOne('s_users', id);
+    if (!u) { const all = await store.readCol('s_users'); u = all.find(x => (x.email || '').toLowerCase() === id) || null; }
+    if (!u && id === ADMIN_ID) u = await ensureAdmin(store, hp, hp.adminPw);
+    if (!u || u.active === false) return { status: 401, body: { error: 'bad' } };
+    const rec = await store.readOne('_s_auth', u.id);
+    if (!rec || !(await hp.check(String(b.pass || ''), rec))) return { status: 401, body: { error: 'bad' } };
+    await log(store, u.id, 'login', 'sys', '', 'تسجيل دخول');
+    return { status: 200, body: { ok: true, id: u.id, mustChange: !!rec.temp }, session: u.id };
+  }
+  if (act === 'logout') return { status: 200, body: { ok: true }, session: null };
+  const me = sessId ? await store.readOne('s_users', sessId) : null;
+  if (!me || me.active === false) return { status: 401, body: { error: 'auth' } };
+
+  if (act === 'boot') {
+    const out = { me: pub(me), mods: MODS, presets: Object.fromEntries(Object.entries(PRESETS).map(([k, v]) => [k, v.n])) };
+    for (const [m, c] of Object.entries(COL)) if (can(me, m, 'v') || (m === 'task')) {
+      let docs = await store.readCol(c);
+      if (!can(me, m, 'v')) docs = docs.filter(d => d.owner === me.id); // tasks assigned to me are always visible
+      out[m] = docs;
+    }
+    const users = await store.readCol('s_users');
+    out.people = users.filter(u => u.active !== false).map(u => ({ id: u.id, name: u.name, title: u.title || '' }));
+    if (me.admin) out.users = users.map(pub);
+    out.notif = (await store.readCol('s_notif')).filter(n => n.to === me.id).sort((a, b) => b.at - a.at).slice(0, 60);
+    if (me.admin || can(me, 'rep', 'v')) out.log = (await store.readCol('s_log')).sort((a, b) => b.at - a.at).slice(0, 40);
+    return { status: 200, body: out };
+  }
+  if (act === 'save') {
+    const m = b.mod, c = COL[m]; if (!c) return { status: 400, body: { error: 'mod' } };
+    const d = b.doc || {}; const old = d.id ? await store.readOne(c, d.id) : null;
+    const isOwnTask = m === 'task' && old && old.owner === me.id;
+    if (old ? !(can(me, m, 'e') || isOwnTask || (m === 'req' && can(me, m, 'ap'))) : !can(me, m, 'a')) return { status: 403, body: { error: 'forbidden' } };
+    const doc = { ...(old || {}), id: old?.id || rid() };
+    for (const f of FIELDS[m]) if (f in d) doc[f] = clean(d[f], f === 'body' || f === 'details' ? 4000 : 300);
+    // approval changes need approval permission
+    if (m === 'req' && old && d.status && d.status !== old.status && ['معتمد', 'مرفوض'].includes(d.status) && !can(me, 'req', 'ap')) return { status: 403, body: { error: 'forbidden' } };
+    if (isOwnTask && !can(me, m, 'e')) { for (const f of FIELDS.task) if (!['status', 'progress'].includes(f)) doc[f] = old[f]; }
+    if (!old) { doc.by = me.id; doc.at = Date.now(); if (m === 'req' && !doc.status) doc.status = 'جديد'; if (m === 'task' && !doc.status) doc.status = 'لم تبدأ'; }
+    doc.upd = Date.now(); doc.updBy = me.id;
+    if (m === 'req' && old && doc.status !== old.status) { doc.hist = [...(old.hist || []), { s: doc.status, by: me.id, at: Date.now(), note: clean(d.note, 300) }]; }
+    if (m === 'req' && !old) doc.hist = [{ s: doc.status, by: me.id, at: Date.now() }];
+    await store.writeDoc(c, doc.id, doc);
+    await log(store, me.id, old ? 'edit' : 'add', m, doc.id, doc.title || doc.name);
+    // notifications
+    const users = (await store.readCol('s_users')).filter(u => u.active !== false && u.id !== me.id);
+    if (m === 'task' && doc.owner && (!old || old.owner !== doc.owner) && doc.owner !== me.id) await notify(store, [doc.owner], 'أُسندت إليك مهمة: ' + doc.title, 'task', doc.id);
+    if (m === 'task' && old && old.status !== doc.status && doc.by && doc.by !== me.id) await notify(store, [doc.by], `تحديث مهمة «${doc.title}»: ${doc.status}`, 'task', doc.id);
+    if (m === 'req' && !old) await notify(store, users.filter(u => can(u, 'req', 'ap')).map(u => u.id), 'طلب جديد بانتظار الاعتماد: ' + doc.title, 'req', doc.id);
+    if (m === 'req' && old && old.status !== doc.status && doc.by !== me.id) await notify(store, [doc.by], `طلبك «${doc.title}» أصبح: ${doc.status}`, 'req', doc.id);
+    if (m === 'dec' && !old) await notify(store, users.filter(u => can(u, 'dec', 'v')).map(u => u.id), 'قرار / تعميم جديد: ' + doc.title, 'dec', doc.id);
+    if (m === 'kpi') { const t = +doc.target, a = +doc.actual; const bad = isFinite(t) && isFinite(a) && (doc.better === 'low' ? a > t : a < t);
+      if (bad) await notify(store, users.filter(u => u.admin || can(u, 'kpi', 'e')).map(u => u.id), `مؤشر دون المستهدف: ${doc.name} (${a} من ${t})`, 'kpi', doc.id); }
+    return { status: 200, body: { ok: true, doc } };
+  }
+  if (act === 'del') {
+    const m = b.mod, c = COL[m]; if (!c || !can(me, m, 'd')) return { status: 403, body: { error: 'forbidden' } };
+    const old = await store.readOne(c, b.id); await store.writeDoc(c, b.id, null); await log(store, me.id, 'del', m, b.id, old?.title || old?.name);
+    return { status: 200, body: { ok: true } };
+  }
+  if (act === 'read') { // mark notifications read
+    const all = (await store.readCol('s_notif')).filter(n => n.to === me.id && !n.read && (!b.id || n.id === b.id));
+    for (const n of all) await store.writeDoc('s_notif', n.id, { ...n, read: true });
+    return { status: 200, body: { ok: true } };
+  }
+  if (act === 'pw') {
+    if (String(b.pass || '').length < 10) return { status: 400, body: { error: 'weak' } };
+    const rec = await store.readOne('_s_auth', me.id);
+    if (!rec || !(await hp.check(String(b.old || ''), rec))) return { status: 401, body: { error: 'old' } };
+    await store.writeDoc('_s_auth', me.id, { id: me.id, ...(await hp.hash(b.pass)) }); return { status: 200, body: { ok: true } };
+  }
+  // ---- administration ----
+  if (!me.admin) return { status: 403, body: { error: 'forbidden' } };
+  if (act === 'user') {
+    const u = b.user || {}; const id = clean(u.id, 40).trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+    if (!id) return { status: 400, body: { error: 'id' } };
+    const old = await store.readOne('s_users', id);
+    if (!old && !b.pass) return { status: 400, body: { error: 'pass' } };
+    if (b.pass && String(b.pass).length < 10) return { status: 400, body: { error: 'weak' } };
+    const doc = { ...(old || {}), id, name: clean(u.name, 80) || id, title: clean(u.title, 80), email: clean(u.email, 120), preset: clean(u.preset, 20),
+      admin: id === ADMIN_ID ? true : !!u.admin, active: id === ADMIN_ID ? true : u.active !== false, perms: u.perms || old?.perms || PRESETS.view.p(), at: old?.at || Date.now() };
+    await store.writeDoc('s_users', id, doc);
+    if (b.pass) await store.writeDoc('_s_auth', id, { id, ...(await hp.hash(b.pass)), temp: !!b.temp });
+    await log(store, me.id, old ? 'edit' : 'add', 'users', id, doc.name);
+    if (!old) await notify(store, [id], 'مرحباً بك في النظام، تم إنشاء حسابك', 'sys', '');
+    else if (JSON.stringify(old.perms) !== JSON.stringify(doc.perms)) await notify(store, [id], 'تم تحديث صلاحياتك في النظام', 'sys', '');
+    return { status: 200, body: { ok: true, user: pub(doc) } };
+  }
+  if (act === 'userDel') {
+    if (b.id === ADMIN_ID) return { status: 400, body: { error: 'admin' } };
+    await store.writeDoc('s_users', b.id, null); await store.writeDoc('_s_auth', b.id, null); await log(store, me.id, 'del', 'users', b.id, b.id);
+    return { status: 200, body: { ok: true } };
+  }
+  if (act === 'seed') { await seed(store, me.id); await log(store, me.id, 'add', 'sys', '', 'تحميل بيانات تجريبية'); return { status: 200, body: { ok: true } }; }
+  if (act === 'wipe') {
+    for (const c of Object.values(COL)) for (const d of await store.readCol(c)) await store.writeDoc(c, d.id, null);
+    for (const n of await store.readCol('s_notif')) await store.writeDoc('s_notif', n.id, null);
+    await log(store, me.id, 'del', 'sys', '', 'مسح بيانات العرض'); return { status: 200, body: { ok: true } };
+  }
+  return { status: 400, body: { error: 'act' } };
+}
+
+async function seed(store, by) {
+  const day = 864e5, now = Date.now(), d = n => new Date(now + n * day).toISOString().slice(0, 10);
+  const W = async (c, o) => { const id = rid(); await store.writeDoc(c, id, { id, by, at: now - Math.random() * 6 * day, upd: now, ...o }); };
+  const R = [['اعتماد خطة الفصل الدراسي الثاني', 'أكاديمي', 'قيد الدراسة', 2, 'عالية'], ['طلب تكليف أستاذ متعاون', 'موارد بشرية', 'جديد', 5, 'متوسطة'], ['اعتماد نتائج الاختبارات النهائية', 'أكاديمي', 'معتمد', -3, 'عالية'],
+    ['شراء أجهزة لمعمل اللغات', 'مالي', 'قيد الدراسة', -1, 'متوسطة'], ['طلب إجازة علمية', 'موارد بشرية', 'جديد', 7, 'منخفضة'], ['تعديل جدول المحاضرات', 'أكاديمي', 'مرفوض', -6, 'منخفضة'], ['مشاركة في مؤتمر دولي', 'بحثي', 'معتمد', -10, 'متوسطة'], ['طلب دعم نشر بحث', 'بحثي', 'جديد', 3, 'متوسطة']];
+  for (const [title, type, status, due, priority] of R) await W('s_req', { title, type, applicant: ['د. أحمد', 'د. سارة', 'أ. محمد', 'د. نورة'][Math.floor(Math.random() * 4)], status, due: d(due), priority, details: '', hist: [{ s: status, by, at: now }] });
+  const T = [['إعداد تقرير الأداء الفصلي', 'جارية', 4, 60, 'عالية'], ['تحديث توصيف المقررات', 'جارية', -2, 40, 'عالية'], ['متابعة استبانات رضا الطلاب', 'مكتملة', -5, 100, 'متوسطة'], ['تجهيز ملفات الاعتماد', 'لم تبدأ', 10, 0, 'عالية'],
+    ['جدولة اجتماع مجلس القسم', 'مكتملة', -1, 100, 'منخفضة'], ['حصر احتياجات التدريب', 'جارية', 6, 30, 'متوسطة'], ['مراجعة توزيع الأعباء التدريسية', 'لم تبدأ', -1, 0, 'عالية']];
+  for (const [title, status, due, progress, priority] of T) await W('s_task', { title, status, due: d(due), progress: String(progress), priority, owner: by });
+  const D = [['تفعيل المعاملات الإلكترونية داخل القسم', '12/1448', -20, 200], ['مواعيد رفع درجات أعمال الفصل', '15/1448', -8, 30], ['تشكيل فريق متابعة الجودة', '18/1448', -2, 365]];
+  for (const [title, no, ago, dur] of D) await W('s_dec', { title, no, date: d(ago), until: d(ago + dur), body: 'نص مختصر للقرار يُعرض للجميع مع تاريخ السريان.', audience: 'الجميع' });
+  const K = [['نسبة إنجاز المعاملات في وقتها', 90, 78, '%', 'high'], ['متوسط زمن إنجاز الطلب', 5, 7, 'يوم', 'low'], ['رضا الطلاب عن المقررات', 85, 88, '%', 'high'], ['نسبة المهام المكتملة', 80, 64, '%', 'high'], ['نسبة حضور الاجتماعات', 90, 93, '%', 'high'], ['الأبحاث المنشورة هذا العام', 12, 9, 'بحث', 'high']];
+  for (const [name, target, actual, unit, better] of K) await W('s_kpi', { name, target: String(target), actual: String(actual), unit, better, period: 'الفصل الأول 1448' });
+}
+</script>
 <script>
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const TODAY=new Date().toISOString().slice(0,10);
-const R={head:'رئيس القسم',secretary:'سكرتير القسم',chair:'رئيس لجنة',member:'عضو هيئة تدريس',viewer:'مشاهد'};
-const M={circulars:'التعاميم',committees:'اللجان',tasks:'المهام',meetings:'الاجتماعات',users:'المستخدمون والصلاحيات'};
-const A={v:'عرض',a:'إضافة',e:'تعديل',d:'حذف'};
-const ST={todo:'جديدة',doing:'جارية',done:'منتهية'};
-const mk=s=>{const o={};for(const m in M){o[m]={};for(const a in A)o[m][a]=(s[m]||'').includes(a)}return o};
-const defPerms=()=>({head:mk({circulars:'vaed',committees:'vaed',tasks:'vaed',meetings:'vaed',users:'vaed'}),secretary:mk({circulars:'vaed',committees:'v',tasks:'va',meetings:'vae'}),chair:mk({circulars:'v',committees:'v',tasks:'vae',meetings:'vae'}),member:mk({circulars:'v',committees:'v',tasks:'ve',meetings:'v'}),viewer:mk({circulars:'v',committees:'v'})});
-const seed=()=>({me:'u1',
- users:[{id:'u1',name:'د. أحمد',role:'head'},{id:'u2',name:'أ. سارة',role:'secretary'},{id:'u3',name:'د. منى',role:'chair'},{id:'u4',name:'د. خالد',role:'member'},{id:'u5',name:'أ. ليلى',role:'member'},{id:'u6',name:'ضيف',role:'viewer'}],
- committees:[{id:'c1',name:'اللجنة العلمية',chair:'u3',members:['u4','u5']},{id:'c2',name:'لجنة الجداول والاختبارات',chair:'u4',members:['u5','u2']},{id:'c3',name:'لجنة الجودة',chair:'u5',members:['u3']}],
- circulars:[{id:'k1',title:'بدء التسجيل للفصل القادم',body:'يرجى من جميع الأعضاء مراجعة الجداول المبدئية قبل نهاية الأسبوع.',date:TODAY,by:'u1'}],
- tasks:[{id:'t1',title:'مراجعة توصيف المقررات',assignee:'u4',committee:'c1',due:'2026-12-01',status:'doing'},{id:'t2',title:'إعداد جدول الاختبارات النهائية',assignee:'u5',committee:'c2',due:'2026-12-10',status:'todo'},{id:'t3',title:'تقرير الجودة الفصلي',assignee:'u3',committee:'c3',due:'2026-11-20',status:'done'}],
- meetings:[{id:'m1',committee:'c1',date:'2026-11-30',agenda:'مناقشة الخطة الدراسية',minutes:''}],
- perms:defPerms()});
-let S=null;try{S=JSON.parse(localStorage.getItem('dept_v1'))}catch(e){}
-if(!S||!S.perms)S=seed();
-const save=()=>{try{localStorage.setItem('dept_v1',JSON.stringify(S))}catch(e){}};
-const uid=()=>Math.random().toString(36).slice(2,8);
-const me=()=>S.users.find(u=>u.id===S.me)||S.users[0];
-const can=(m,a)=>!!(S.perms[me().role]&&S.perms[me().role][m]&&S.perms[me().role][m][a]);
-const uname=id=>(S.users.find(u=>u.id===id)||{}).name||'—';
-const cname=id=>(S.committees.find(c=>c.id===id)||{}).name||'—';
-const uopt=()=>S.users.map(u=>[u.id,u.name]);
-const copt=()=>[['','—'],...S.committees.map(c=>[c.id,c.name])];
-let tab='home',tf='all',pr='secretary';
+"use strict";
+const SRV=!!document.querySelector('meta[name=srv]');
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>new Date().toISOString().slice(0,10);
+const fmtD=d=>{if(!d)return'—';const x=new Date(d);return isNaN(x)?d:x.toLocaleDateString('ar-SA-u-ca-gregory-nu-latn',{day:'numeric',month:'short'})};
+const ago=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'الآن':m<60?`قبل ${m} د`:m<1440?`قبل ${Math.round(m/60)} س`:`قبل ${Math.round(m/1440)} يوم`};
+const HUE=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))%360;return h};
+const av=(id,name)=>`<span class="av" style="background:hsl(${HUE(id)} 45% 42%)">${esc((name||id||'?').replace(/^(د\.|أ\.)\s*/,'').trim()[0]||'?')}</span>`;
+const I={home:'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',req:'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',task:'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9',dec:'M4 4h16v12H5.2L4 17.2zM8 9h8M8 12h5',kpi:'M4 20V10M10 20V4M16 20v-8M22 20H2',rep:'M6 2h9l5 5v15H6zM9 13h6M9 17h6M9 9h2',users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',bell:'M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0',plus:'M12 5v14M5 12h14',out:'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',menu:'M3 6h18M3 12h18M3 18h18',x:'M18 6L6 18M6 6l12 12',lock:'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',print:'M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z',alert:'M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0',check:'M20 6L9 17l-5-5',clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20M12 6v6l4 2'};
+const ic=(k,s=18)=>`<svg class="ico" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="${I[k]}"/></svg>`;
 
-const cfg={
- circulars:{f:()=>[{k:'title',l:'العنوان'},{k:'body',l:'النص',t:'textarea'}],def:()=>({date:TODAY,by:S.me})},
- committees:{f:()=>[{k:'name',l:'اسم اللجنة'},{k:'chair',l:'رئيس اللجنة',t:'select',o:uopt()},{k:'members',l:'الأعضاء',t:'multi',o:uopt()}],def:()=>({members:[]})},
- tasks:{f:()=>[{k:'title',l:'المهمة'},{k:'assignee',l:'المكلّف',t:'select',o:uopt()},{k:'committee',l:'اللجنة',t:'select',o:copt()},{k:'due',l:'تاريخ التسليم',t:'date'},{k:'status',l:'الحالة',t:'select',o:Object.entries(ST)}],def:()=>({status:'todo',assignee:S.me})},
- meetings:{f:()=>[{k:'agenda',l:'جدول الأعمال',t:'textarea'},{k:'committee',l:'اللجنة',t:'select',o:copt()},{k:'date',l:'التاريخ',t:'date'},{k:'minutes',l:'المحضر والقرارات',t:'textarea'}],def:()=>({date:TODAY})},
- users:{f:()=>[{k:'name',l:'الاسم'},{k:'role',l:'الدور',t:'select',o:Object.entries(R)}],def:()=>({role:'member'})}
-};
+/* ---------- data layer: server API or in-browser demo ---------- */
+let API;
+if(SRV){API=async(act,b={})=>{const r=await fetch('/api/s',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({act,...b})});let j={};try{j=await r.json()}catch{}if(!r.ok)throw Object.assign(new Error(j.error||'err'),{code:r.status,j});return j}}
+else{const mem={};const LSG=k=>{try{return localStorage.getItem(k)}catch{return mem[k]??null}},LSS=(k,v)=>{try{localStorage.setItem(k,v)}catch{mem[k]=v}};
+ const key=c=>'bs_'+c,rd=c=>{try{return JSON.parse(LSG(key(c))||'{}')}catch{return{}}};
+ const store={readCol:async c=>Object.values(rd(c)),readOne:async(c,id)=>rd(c)[id]||null,writeDoc:async(c,id,d)=>{const o=rd(c);if(d===null)delete o[id];else o[id]=d;LSS(key(c),JSON.stringify(o))}};
+ const sha=async s=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))).map(b=>b.toString(16).padStart(2,'0')).join('');
+ const hp={hash:async pw=>{const salt=Math.random().toString(36).slice(2);return{salt,hash:await sha(salt+pw)}},check:async(pw,r)=>r&&(await sha(r.salt+pw))===r.hash,adminPw:'Demo#Albaha2026'};
+ let sid=LSG('bs_sid')||null;
+ API=async(act,b={})=>{if(act==='boot'&&!LSG('bs_seeded')&&sid){await seed(store,sid);LSS('bs_seeded','1')}
+  const r=await handle(store,hp,sid,act,b);if('session' in r){sid=r.session;LSS('bs_sid',sid||'')}if(r.status!==200)throw Object.assign(new Error(r.body.error),{code:r.status,j:r.body});return r.body}}
 
-function inp(f,v){v=v??'';
- if(f.t==='textarea')return `<textarea id="f_${f.k}">${esc(v)}</textarea>`;
- if(f.t==='select')return `<select id="f_${f.k}">${f.o.map(o=>`<option value="${o[0]}" ${o[0]===v?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`;
- if(f.t==='multi')return `<div>${f.o.map(o=>`<label class="ck"><input type="checkbox" name="${f.k}" value="${o[0]}" ${(v||[]).includes(o[0])?'checked':''}>${esc(o[1])}</label>`).join('')}</div>`;
- return `<input id="f_${f.k}" type="${f.t==='date'?'date':'text'}" value="${esc(v)}">`;
+/* ---------- state ---------- */
+let D=null,PAGE=location.hash.slice(1)||'home',F={req:'all',q:''},POP=false;
+const me=()=>D.me,CAN=(m,p)=>can(D.me,m,p);
+const pname=id=>(D.people.find(p=>p.id===id)||{}).name||id||'—';
+const isLate=t=>t.due&&t.status!=='مكتملة'&&t.due<today();
+const RS={'جديد':'p-new','قيد الدراسة':'p-wait','معتمد':'p-ok','مرفوض':'p-bad'};
+const TS={'لم تبدأ':'p-gray','جارية':'p-wait','مكتملة':'p-ok'};
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
+const errMsg=e=>({forbidden:'ليست لديك صلاحية لهذا الإجراء',weak:'كلمة المرور يجب ألا تقل عن 10 أحرف',old:'كلمة المرور الحالية غير صحيحة',bad:'اسم المستخدم أو كلمة المرور غير صحيحة',too_many:'محاولات كثيرة، حاول لاحقاً',no_storage:'قاعدة البيانات غير مفعّلة على الخادم',pass:'كلمة المرور مطلوب إدخالها للمستخدم الجديد',id:'اسم المستخدم غير صالح'}[e.message]||'حدث خطأ، حاول مرة أخرى');
+
+async function load(){try{D=await API('boot');render()}catch(e){if(e.code===401){D=null;renderLogin()}else{renderLogin(errMsg(e))}}}
+
+/* ---------- login ---------- */
+function renderLogin(msg=''){
+ $('#root').innerHTML=`<div class="login"><div class="side"><h1>منصة متابعة أعمال القسم</h1><p>كل ما يحتاجه القائد في شاشة واحدة: الطلبات بانتظار قرارك، المهام المتأخرة، ومؤشرات الأداء — مع تنبيهات فورية وصلاحيات يحددها المدير لكل مستخدم.</p>
+ <ul><li><i>${ic('req',16)}</i>اعتماد الطلبات والمعاملات بضغطة</li><li><i>${ic('task',16)}</i>متابعة المهام والإنجاز والتأخير</li><li><i>${ic('kpi',16)}</i>مؤشرات أداء واضحة مقابل المستهدف</li><li><i>${ic('bell',16)}</i>إشعارات فورية لكل جديد</li><li><i>${ic('lock',16)}</i>صلاحيات دقيقة لكل مستخدم</li></ul></div>
+ <form id="lf" autocomplete="on"><h2>تسجيل الدخول</h2><p>أدخل اسم المستخدم وكلمة المرور</p>
+ <div class="f"><label>اسم المستخدم أو البريد</label><input class="in" name="user" id="lu" autocomplete="username" required dir="ltr"></div>
+ <div class="f"><label>كلمة المرور</label><input class="in" type="password" name="pass" id="lp" autocomplete="current-password" required dir="ltr"></div>
+ <div class="err" id="le">${esc(msg)}</div><button class="btn pri lg" type="submit">دخول</button>
+ ${SRV?'':`<div class="demo-note">نسخة عرض تعمل داخل المتصفح. للدخول: <b dir="ltr">khaled</b> / <b dir="ltr">Demo#Albaha2026</b></div>`}
+ <div class="small muted" style="text-align:center">إعداد وفكرة وتصميم: د. خالد البلوي — جميع الحقوق محفوظة</div></form></div>`;
+ $('#lf').onsubmit=async ev=>{ev.preventDefault();$('#le').textContent='';const b=ev.submitter;b.disabled=true;try{const r=await API('login',{user:$('#lu').value,pass:$('#lp').value});await load();if(r.mustChange)pwModal(true)}catch(e){$('#le').textContent=errMsg(e)}b.disabled=false};
 }
-function modal(h){const o=$('#ov');o.innerHTML=`<div class="md">${h}</div>`;o.hidden=false}
-function closeM(){$('#ov').hidden=true}
-function form(title,fields,vals,cb){
- modal(`<h3>${title}</h3>`+fields.map(f=>`<label>${f.l}${f.t==='multi'?'':inp(f,vals[f.k])}</label>${f.t==='multi'?`<div><b style="font-size:13px">${f.l}</b>${inp(f,vals[f.k])}</div>`:''}`).join('')+`<div class="bar"><button class="b p" id="ok">حفظ</button><button class="b" id="no">إلغاء</button></div>`);
- $('#no').onclick=closeM;
- $('#ok').onclick=()=>{const o={};for(const f of fields){o[f.k]=f.t==='multi'?[...document.querySelectorAll(`[name="${f.k}"]:checked`)].map(x=>x.value):$('#f_'+f.k).value}
-  if(!String(o[fields[0].k]).trim()){$('#f_'+fields[0].k).focus();return}
-  cb(o);save();closeM();render()};
+
+/* ---------- shell ---------- */
+function navItems(){const n=[['home','الرئيسية','home']];for(const m of D.mods)if(CAN(m.k,'v')||(m.k==='task'&&D.task?.length))n.push([m.k,m.n,m.k]);if(me().admin)n.push(['users','المستخدمون والصلاحيات','users']);return n}
+function pending(){return(D.req||[]).filter(r=>['جديد','قيد الدراسة'].includes(r.status))}
+function alerts(){const a=[];const late=(D.task||[]).filter(t=>isLate(t)&&(t.owner===me().id||CAN('task','e')));if(late.length)a.push({text:`${late.length} مهمة متأخرة عن موعدها`,mod:'task',sys:1});
+ if(CAN('req','ap')){const old=pending().filter(r=>Date.now()-(r.at||0)>3*864e5);if(old.length)a.push({text:`${old.length} طلب ينتظر أكثر من 3 أيام`,mod:'req',sys:1})}
+ const low=(D.kpi||[]).filter(kBad);if(low.length&&CAN('kpi','v'))a.push({text:`${low.length} مؤشر دون المستهدف`,mod:'kpi',sys:1});return a}
+const unread=()=>D.notif.filter(n=>!n.read).length+alerts().length;
+function render(){if(!navItems().some(n=>n[0]===PAGE))PAGE='home';
+ const items=navItems(),cnt={req:CAN('req','ap')?pending().length:0,task:(D.task||[]).filter(t=>t.owner===me().id&&t.status!=='مكتملة').length};
+ const title=(items.find(n=>n[0]===PAGE)||[,''])[1];
+ $('#root').innerHTML=`<div class="app"><nav class="nav" id="nav"><div class="brand">منصة متابعة القسم<small>نموذج أولي للفكرة</small></div>
+ ${items.map(([k,n,i])=>`<a class="${PAGE===k?'on':''}" data-go="${k}">${ic(i)}${n}${cnt[k]?`<span class="cnt">${cnt[k]}</span>`:''}</a>`).join('')}
+ <div class="sep"></div><a data-act="pw">${ic('lock')}تغيير كلمة المرور</a><a data-act="logout">${ic('out')}تسجيل الخروج</a>
+ <div class="foot">إعداد وفكرة وتصميم: د. خالد البلوي<br>جميع الحقوق محفوظة</div></nav>
+ <div class="main"><div class="top"><button class="btn ghost menu-btn" data-act="menu">${ic('menu')}</button><h1>${esc(title)}</h1><div class="sp"></div>
+ <button class="btn ghost bell" data-act="bell" title="الإشعارات">${ic('bell',20)}${unread()?`<span class="dot">${unread()}</span>`:''}</button>
+ <div class="who" data-act="pw">${av(me().id,me().name)}<div><b>${esc(me().name)}</b><small>${esc(me().title||(me().admin?'مدير النظام':''))}</small></div></div></div>
+ <div class="page" id="page">${(V[PAGE]||V.home)()}</div></div></div>${POP?bellPop():''}`;
 }
-function ask(msg,cb){modal(`<h3>${msg}</h3><div class="bar"><button class="b p" id="ok">تأكيد</button><button class="b" id="no">إلغاء</button></div>`);$('#no').onclick=closeM;$('#ok').onclick=()=>{cb();save();closeM();render()}}
+function bellPop(){const al=alerts();return`<div class="pop" id="pop"><div class="hd"><b>الإشعارات</b>${D.notif.some(n=>!n.read)?`<button class="btn sm ghost" data-act="readAll">تعليم الكل كمقروء</button>`:''}</div><div class="bd">
+ ${al.map(n=>`<div class="nt unread" data-go="${n.mod}"><span style="color:var(--warn)">${ic('alert',16)}</span><div><b>${esc(n.text)}</b><small>تنبيه تلقائي</small></div></div>`).join('')}
+ ${D.notif.map(n=>`<div class="nt ${n.read?'':'unread'}" data-nt="${n.id}" data-go="${n.mod==='sys'?'home':n.mod}"><span class="dt"></span><div>${esc(n.text)}<small>${ago(n.at)}</small></div></div>`).join('')}
+ ${!al.length&&!D.notif.length?'<div class="empty">لا توجد إشعارات</div>':''}</div></div>`}
 
-const btns=(m,id)=>{const e=can(m,'e')&&!(m==='tasks'&&me().role==='member'),d=can(m,'d');return (e||d)?`<div class="acts">${e?`<button class="s" data-act="edit" data-m="${m}" data-id="${id}">تعديل</button>`:''}${d?`<button class="s x" data-act="del" data-m="${m}" data-id="${id}">حذف</button>`:''}</div>`:''};
-const hdr=m=>`<div class="top"><h2>${M[m]}</h2>${can(m,'a')?`<button class="b p" data-act="add" data-m="${m}">+ إضافة</button>`:''}</div>`;
-const empty='<p class="mu">لا توجد بيانات بعد</p>';
+/* ---------- views ---------- */
+const kBad=k=>{const t=+k.target,a=+k.actual;return isFinite(t)&&isFinite(a)&&k.actual!==''&&(k.better==='low'?a>t:a<t)};
+const kPct=k=>{const t=+k.target,a=+k.actual;if(!t)return 0;return Math.max(0,Math.min(100,Math.round(k.better==='low'?(t/Math.max(a,0.0001))*100:(a/t)*100)))};
+const V={};
+V.home=()=>{const T=D.task||[],R=D.req||[],K=D.kpi||[];const late=T.filter(isLate),done=T.filter(t=>t.status==='مكتملة').length,rate=T.length?Math.round(done/T.length*100):0,bad=K.filter(kBad);
+ const h=new Date().getHours();const tiles=[];
+ if(CAN('req','v'))tiles.push(['req',CAN('req','ap')?'طلبات بانتظار قرارك':'طلبات قيد المعالجة',pending().length,'var(--priL)','var(--pri)','req']);
+ tiles.push(['task','مهام متأخرة',late.length,late.length?'var(--badL)':'var(--okL)',late.length?'var(--bad)':'var(--ok)','clock']);
+ tiles.push(['task','نسبة إنجاز المهام',rate+'%','var(--okL)','var(--ok)','check']);
+ if(CAN('kpi','v'))tiles.push(['kpi','مؤشرات دون المستهدف',bad.length,bad.length?'var(--warnL)':'var(--okL)',bad.length?'var(--warn)':'var(--ok)','kpi']);
+ const st=['لم تبدأ','جارية','مكتملة'].map(s=>T.filter(t=>t.status===s).length);const col=['#A9B3C6','#D69E2E','#1E8E5A'];
+ const rs=['جديد','قيد الدراسة','معتمد','مرفوض'].map(s=>R.filter(r=>r.status===s).length);const rcol=['#2E6BC0','#D69E2E','#1E8E5A','#C0392B'];
+ const stack=(a,c,l)=>{const s=a.reduce((x,y)=>x+y,0)||1;return`<div class="stack">${a.map((v,i)=>v?`<i style="width:${v/s*100}%;background:${c[i]}" title="${l[i]}: ${v}"></i>`:'').join('')}</div><div class="legend mt" style="margin-top:10px">${a.map((v,i)=>`<span><i style="background:${c[i]}"></i>${l[i]}: <b>${v}</b></span>`).join('')}</div>`};
+ return`<div class="hello"><div><h2>${h<12?'صباح الخير':'مساء الخير'}، ${esc(me().name.split(' ').slice(0,2).join(' '))}</h2><p>هذه خلاصة اليوم — ${new Date().toLocaleDateString('ar-SA-u-ca-gregory-nu-latn',{weekday:'long',day:'numeric',month:'long'})}</p></div></div>
+ <div class="grid g4">${tiles.map(([go,l,n,bg,fg,i])=>`<div class="card tile" data-go="${go}"><div class="ti" style="background:${bg};color:${fg}">${ic(i,22)}</div><div><div class="n">${n}</div><div class="l">${l}</div></div></div>`).join('')}</div>
+ <div class="grid g21" style="margin-top:16px"><div class="card"><h3>${ic('alert')}يحتاج انتباهك<span class="sp"></span></h3><div class="list">
+ ${[...(CAN('req','ap')?pending().slice(0,5).map(r=>`<div class="li" data-open="req:${r.id}"><span class="pill ${RS[r.status]}">${r.status}</span><div class="t"><b>${esc(r.title)}</b><small>${esc(r.applicant||pname(r.by))} · ${esc(r.type||'')}</small></div><span class="small muted">${fmtD(r.due)}</span></div>`):[]),
+   ...late.slice(0,5).map(t=>`<div class="li" data-open="task:${t.id}"><span class="pill p-bad">متأخرة</span><div class="t"><b>${esc(t.title)}</b><small>${esc(pname(t.owner))} · الموعد ${fmtD(t.due)}</small></div><span class="small muted">${t.progress||0}%</span></div>`)].join('')||'<div class="empty">لا شيء عاجل — كل شيء تحت السيطرة ✓</div>'}</div></div>
+ <div class="card"><h3>${ic('task')}حالة المهام</h3>${stack(st,col,['لم تبدأ','جارية','مكتملة'])}${CAN('req','v')?`<h3 style="margin-top:22px">${ic('req')}حالة الطلبات</h3>${stack(rs,rcol,['جديد','قيد الدراسة','معتمد','مرفوض'])}`:''}</div></div>
+ <div class="grid g2" style="margin-top:16px">${CAN('kpi','v')?`<div class="card"><h3>${ic('kpi')}مؤشرات الأداء<span class="sp"></span><a class="small" data-go="kpi">عرض الكل</a></h3>${K.slice(0,5).map(k=>`<div style="margin:10px 0"><div class="row" style="justify-content:space-between"><span>${esc(k.name)}</span><b style="color:${kBad(k)?'var(--bad)':'var(--ok)'}">${esc(k.actual)}${esc(k.unit==='%'?'%':' '+k.unit)} <span class="muted small">/ ${esc(k.target)}</span></b></div><div class="bar"><i style="width:${kPct(k)}%;background:${kBad(k)?'#D69E2E':'#1E8E5A'}"></i></div></div>`).join('')||'<div class="empty">لا توجد مؤشرات</div>'}</div>`:''}
+ ${CAN('dec','v')?`<div class="card"><h3>${ic('dec')}أحدث القرارات والتعاميم<span class="sp"></span><a class="small" data-go="dec">عرض الكل</a></h3><div class="list">${(D.dec||[]).sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,4).map(d=>`<div class="li" data-open="dec:${d.id}"><div class="t"><b>${esc(d.title)}</b><small>رقم ${esc(d.no||'—')} · ${fmtD(d.date)}</small></div>${decPill(d)}</div>`).join('')||'<div class="empty">لا توجد قرارات</div>'}</div></div>`:''}</div>`};
+const decPill=d=>d.until&&d.until<today()?'<span class="pill p-gray">منتهي</span>':'<span class="pill p-ok">ساري</span>';
+const addBtn=(m,t)=>CAN(m,'a')?`<button class="btn pri" data-new="${m}">${ic('plus',16)}${t}</button>`:'';
+V.req=()=>{const S=['all','جديد','قيد الدراسة','معتمد','مرفوض'];let R=(D.req||[]).slice().sort((a,b)=>(b.at||0)-(a.at||0));if(F.req!=='all')R=R.filter(r=>r.status===F.req);if(F.q)R=R.filter(r=>(r.title+r.applicant+r.type).includes(F.q));
+ return`<div class="tools"><div class="chips">${S.map(s=>`<button class="chip ${F.req===s?'on':''}" data-freq="${s}">${s==='all'?'الكل':s} <span class="muted">${s==='all'?(D.req||[]).length:(D.req||[]).filter(r=>r.status===s).length}</span></button>`).join('')}</div><input class="in search" id="q" placeholder="بحث…" value="${esc(F.q)}"><div style="flex:1"></div>${addBtn('req','طلب جديد')}</div>
+ <div class="card tbl">${R.length?`<table><tr><th>الطلب</th><th>النوع</th><th>مقدم الطلب</th><th>الأولوية</th><th>الموعد</th><th>الحالة</th></tr>${R.map(r=>`<tr class="click" data-open="req:${r.id}"><td><b>${esc(r.title)}</b></td><td>${esc(r.type||'—')}</td><td>${esc(r.applicant||pname(r.by))}</td><td>${esc(r.priority||'—')}</td><td>${fmtD(r.due)}</td><td><span class="pill ${RS[r.status]||'p-gray'}">${esc(r.status)}</span></td></tr>`).join('')}</table>`:'<div class="empty">لا توجد طلبات</div>'}</div>`};
+V.task=()=>{const T=D.task||[];const cols=['لم تبدأ','جارية','مكتملة'];
+ return`<div class="tools"><input class="in search" id="q" placeholder="بحث في المهام…" value="${esc(F.q)}"><div style="flex:1"></div>${addBtn('task','مهمة جديدة')}</div><div class="kan">${cols.map(c=>{const L=T.filter(t=>t.status===c&&(!F.q||t.title.includes(F.q)));return`<div class="col"><h4><span class="pill ${TS[c]}">${c}</span><span class="muted">${L.length}</span></h4>
+ ${L.map(t=>`<div class="kc ${isLate(t)?'late':''}" data-open="task:${t.id}"><b>${esc(t.title)}</b><div class="bar" style="margin-bottom:8px"><i style="width:${+t.progress||0}%"></i></div><div class="row"><span class="row" style="gap:6px">${av(t.owner,pname(t.owner))}<span class="small">${esc(pname(t.owner))}</span></span><span class="small ${isLate(t)?'':'muted'}" style="${isLate(t)?'color:var(--bad);font-weight:700':''}">${fmtD(t.due)}</span></div></div>`).join('')||'<div class="empty small">—</div>'}</div>`}).join('')}</div>`};
+V.dec=()=>{const L=(D.dec||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));return`<div class="tools"><input class="in search" id="q" placeholder="بحث…" value="${esc(F.q)}"><div style="flex:1"></div>${addBtn('dec','قرار / تعميم')}</div>
+ <div class="grid g3">${L.filter(d=>!F.q||d.title.includes(F.q)).map(d=>`<div class="card" data-open="dec:${d.id}" style="cursor:pointer"><div class="row" style="justify-content:space-between;margin-bottom:8px">${decPill(d)}<span class="small muted">رقم ${esc(d.no||'—')}</span></div><b style="font-size:15px">${esc(d.title)}</b><p class="small muted" style="margin:8px 0">${esc((d.body||'').slice(0,110))}</p><div class="small muted">${fmtD(d.date)} ← ${d.until?fmtD(d.until):'مفتوح'}</div></div>`).join('')||'<div class="empty">لا توجد قرارات</div>'}</div>`};
+V.kpi=()=>{const K=D.kpi||[];return`<div class="tools"><span class="legend"><span><i style="background:#1E8E5A"></i>محقق</span><span><i style="background:#D69E2E"></i>دون المستهدف</span></span><div style="flex:1"></div>${addBtn('kpi','مؤشر جديد')}</div>
+ <div class="grid g3">${K.map(k=>`<div class="card kpi" data-open="kpi:${k.id}" style="cursor:pointer"><div class="row" style="justify-content:space-between"><span class="small muted">${esc(k.period||'')}</span><span class="pill ${kBad(k)?'p-wait':'p-ok'}">${kBad(k)?'دون المستهدف':'محقق'}</span></div><div style="margin:10px 0 4px;font-weight:600">${esc(k.name)}</div><div class="row" style="align-items:baseline"><span class="big">${esc(k.actual)}</span><span>${esc(k.unit)}</span><span class="tg">المستهدف ${esc(k.target)} ${k.better==='low'?'(الأقل أفضل)':''}</span></div><div class="bar" style="margin-top:10px"><i style="width:${kPct(k)}%;background:${kBad(k)?'#D69E2E':'#1E8E5A'}"></i></div></div>`).join('')||'<div class="empty">لا توجد مؤشرات</div>'}</div>`};
+V.rep=()=>{const T=D.task||[],R=D.req||[],K=D.kpi||[];const done=T.filter(t=>t.status==='مكتملة').length,late=T.filter(isLate);const ap=R.filter(r=>r.status==='معتمد').length,rj=R.filter(r=>r.status==='مرفوض').length;
+ const byOwner={};T.forEach(t=>{const o=byOwner[t.owner]||(byOwner[t.owner]={n:0,d:0,l:0});o.n++;if(t.status==='مكتملة')o.d++;if(isLate(t))o.l++});
+ return`<div class="tools noprint"><span class="muted">تقرير تلقائي محدث لحظياً — ${new Date().toLocaleDateString('ar-SA-u-ca-gregory-nu-latn')}</span><div style="flex:1"></div><button class="btn" onclick="print()">${ic('print',16)}طباعة / PDF</button></div>
+ <div class="grid g4">${[['إجمالي الطلبات',R.length],['معتمدة',ap],['مرفوضة',rj],['قيد الإجراء',pending().length],['إجمالي المهام',T.length],['مكتملة',done],['متأخرة',late.length],['نسبة الإنجاز',(T.length?Math.round(done/T.length*100):0)+'%']].map(([l,n])=>`<div class="card"><div class="muted small">${l}</div><div style="font-size:24px;font-weight:700">${n}</div></div>`).join('')}</div>
+ <div class="grid g2" style="margin-top:16px"><div class="card"><h3>الإنجاز حسب المسؤول</h3><table><tr><th>المسؤول</th><th>المهام</th><th>مكتملة</th><th>متأخرة</th><th style="width:30%">الإنجاز</th></tr>${Object.entries(byOwner).map(([o,v])=>`<tr><td>${esc(pname(o))}</td><td>${v.n}</td><td>${v.d}</td><td style="${v.l?'color:var(--bad);font-weight:700':''}">${v.l}</td><td><div class="bar"><i style="width:${Math.round(v.d/v.n*100)}%"></i></div></td></tr>`).join('')}</table></div>
+ <div class="card"><h3>مؤشرات الأداء</h3><table><tr><th>المؤشر</th><th>المستهدف</th><th>الفعلي</th><th>الحالة</th></tr>${K.map(k=>`<tr><td>${esc(k.name)}</td><td>${esc(k.target)}</td><td>${esc(k.actual)}</td><td><span class="pill ${kBad(k)?'p-wait':'p-ok'}">${kBad(k)?'يحتاج تحسين':'محقق'}</span></td></tr>`).join('')}</table></div></div>
+ <div class="card" style="margin-top:16px"><h3>فرص التحسين المقترحة</h3><ul style="margin:0;padding-inline-start:20px;line-height:2">${improve().map(x=>`<li>${x}</li>`).join('')}</ul></div>
+ ${D.log?`<div class="card noprint" style="margin-top:16px"><h3>سجل النشاط</h3><div class="list">${D.log.slice(0,12).map(l=>`<div class="li" style="cursor:default">${av(l.by,pname(l.by))}<div class="t"><b>${esc(pname(l.by))} — ${({add:'أضاف',edit:'عدّل',del:'حذف',login:'دخل النظام'})[l.act]||l.act} ${esc(l.act==='login'?'':l.title||'')}</b><small>${ago(l.at)}</small></div></div>`).join('')}</div></div>`:''}`};
+function improve(){const out=[],T=D.task||[],K=D.kpi||[];const late=T.filter(isLate);if(late.length)out.push(`معالجة <b>${late.length}</b> مهمة متأخرة: إعادة جدولة أو إعادة توزيع على من لديه سعة.`);
+ const old=pending().filter(r=>Date.now()-(r.at||0)>3*864e5);if(old.length)out.push(`<b>${old.length}</b> طلب ينتظر أكثر من 3 أيام — يُقترح تحديد مدة قصوى للرد على كل نوع طلب.`);
+ K.filter(kBad).forEach(k=>out.push(`مؤشر «${esc(k.name)}» عند ${esc(k.actual)} مقابل ${esc(k.target)}: وضع خطة تحسين بمسؤول وموعد.`));
+ const cnt={};T.filter(t=>t.status!=='مكتملة').forEach(t=>cnt[t.owner]=(cnt[t.owner]||0)+1);const mx=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];if(mx&&mx[1]>=4)out.push(`تركّز المهام المفتوحة لدى ${esc(pname(mx[0]))} (${mx[1]} مهام) — يُنصح بتوزيع الحمل.`);
+ return out.length?out:['لا توجد ملاحظات حالياً — الأداء ضمن المستهدف.']}
+V.users=()=>{const U=D.users||[];return`<div class="tools"><span class="muted">حدّد لكل مستخدم ما يراه وما يستطيع فعله. التغيير يُطبّق فوراً ويصل المستخدم إشعار.</span><div style="flex:1"></div><button class="btn pri" data-act="userNew">${ic('plus',16)}مستخدم جديد</button></div>
+ <div class="card tbl"><table><tr><th>المستخدم</th><th>اسم الدخول</th><th>الصفة</th><th>الصلاحيات</th><th>الحالة</th></tr>${U.map(u=>`<tr class="click" data-user="${u.id}"><td><span class="row">${av(u.id,u.name)}<b>${esc(u.name)}</b></span></td><td dir="ltr" style="text-align:end">${esc(u.id)}</td><td>${esc(u.title||'—')}</td><td>${u.admin?'<span class="pill p-new">مدير النظام</span>':`<span class="small">${D.mods.filter(m=>u.perms?.[m.k]?.v).map(m=>m.n.split(' ')[0]).join('، ')||'—'}</span>`}</td><td>${u.active?'<span class="pill p-ok">مفعّل</span>':'<span class="pill p-gray">موقوف</span>'}</td></tr>`).join('')}</table></div>
+ <div class="card" style="margin-top:16px"><h3>بيانات العرض</h3><p class="muted small" style="margin-top:0">لعرض الفكرة على الإدارة يمكن تحميل بيانات تجريبية ثم مسحها قبل التشغيل الفعلي.</p><div class="row"><button class="btn" data-act="seed">تحميل بيانات تجريبية</button><button class="btn bad" data-act="wipe">مسح بيانات العرض</button></div></div>`};
 
-const views={
- home(){const u=me(),open=S.tasks.filter(t=>t.status!=='done'),mine=open.filter(t=>t.assignee===u.id),up=S.meetings.filter(m=>m.date>=TODAY).sort((a,b)=>a.date<b.date?-1:1);
-  return `<div class="grid">${[['مهام مفتوحة',open.length],['مهامي',mine.length],['اجتماعات قادمة',up.length],['تعاميم',S.circulars.length]].map(s=>`<div class="card st"><b>${s[1]}</b><span>${s[0]}</span></div>`).join('')}</div>
-  <div class="cols"><section class="card"><h2>مهامي</h2>${mine.map(t=>`<div class="row"><span>${esc(t.title)}</span><small>${t.due||''}</small></div>`).join('')||'<p class="mu">لا توجد مهام مفتوحة عليك</p>'}</section>
-  <section class="card"><h2>أقرب اجتماع</h2>${up[0]?`<b>${esc(cname(up[0].committee))}</b><p>${up[0].date}</p><p class="mu">${esc(up[0].agenda)}</p>`:'<p class="mu">لا توجد اجتماعات قادمة</p>'}</section></div>`},
- circulars(){return hdr('circulars')+([...S.circulars].sort((a,b)=>a.date<b.date?1:-1).map(c=>`<div class="card"><b>${esc(c.title)}</b><p>${esc(c.body)}</p><small>${c.date} · ${esc(uname(c.by))}</small>${btns('circulars',c.id)}</div>`).join('')||empty)},
- committees(){return hdr('committees')+(S.committees.map(c=>`<div class="card"><b>${esc(c.name)}</b><p class="mu">رئيس اللجنة: ${esc(uname(c.chair))}</p><div>${(c.members||[]).map(i=>`<span class="chip">${esc(uname(i))}</span>`).join('')||'<small>لا أعضاء</small>'}</div>${btns('committees',c.id)}</div>`).join('')||empty)},
- tasks(){const u=me(),l=S.tasks.filter(t=>tf==='all'||t.assignee===u.id);
-  return hdr('tasks')+`<div style="margin-bottom:10px"><span class="chip ${tf==='all'?'on':''}" data-act="tf" data-id="all">الكل</span><span class="chip ${tf==='mine'?'on':''}" data-act="tf" data-id="mine">مهامي</span></div>`+
-  (l.map(t=>{const ce=can('tasks','e')&&(u.role!=='member'||t.assignee===u.id);return `<div class="card"><div class="row" style="border:0;padding:0"><b>${esc(t.title)}</b>${ce?`<select data-chg="tst" data-id="${t.id}">${Object.entries(ST).map(s=>`<option value="${s[0]}" ${s[0]===t.status?'selected':''}>${s[1]}</option>`).join('')}</select>`:`<span class="tag ${t.status}">${ST[t.status]}</span>`}</div><small>${esc(uname(t.assignee))} · ${esc(cname(t.committee))} · ${t.due||'بدون تاريخ'}</small>${btns('tasks',t.id)}</div>`}).join('')||empty)},
- meetings(){return hdr('meetings')+([...S.meetings].sort((a,b)=>a.date<b.date?1:-1).map(m=>`<div class="card"><b>${esc(cname(m.committee))}</b> <small>${m.date}</small><p>${esc(m.agenda)}</p>${m.minutes?`<p class="mu">القرارات: ${esc(m.minutes)}</p>`:''}${btns('meetings',m.id)}</div>`).join('')||empty)},
- users(){const ed=can('users','e'),L=pr==='head';
-  return hdr('users')+`<div class="card scroll"><table><tr><th>الاسم</th><th>الدور</th><th></th></tr>${S.users.map(u=>`<tr><td>${esc(u.name)}</td><td>${ed?`<select data-chg="urole" data-id="${u.id}">${Object.entries(R).map(r=>`<option value="${r[0]}" ${r[0]===u.role?'selected':''}>${r[1]}</option>`).join('')}</select>`:R[u.role]}</td><td>${can('users','d')&&u.id!==S.me?`<button class="s x" data-act="del" data-m="users" data-id="${u.id}">حذف</button>`:''}</td></tr>`).join('')}</table></div>
-  <div class="card"><h2>مصفوفة الصلاحيات</h2><div style="margin-bottom:10px">${Object.entries(R).map(r=>`<span class="chip ${pr===r[0]?'on':''}" data-act="pr" data-id="${r[0]}">${r[1]}</span>`).join('')}</div>
-  <div class="scroll"><table><tr><th>الوحدة</th>${Object.values(A).map(a=>`<th>${a}</th>`).join('')}</tr>${Object.keys(M).map(m=>`<tr><td>${M[m]}</td>${Object.keys(A).map(a=>`<td><input type="checkbox" data-chg="perm" data-m="${m}" data-a="${a}" ${S.perms[pr][m][a]?'checked':''} ${(!ed||L)?'disabled':''}></td>`).join('')}</tr>`).join('')}</table></div>
-  ${L?'<small>صلاحيات رئيس القسم كاملة وثابتة.</small>':''}${ed?`<div class="acts"><button class="s x" data-act="reset">إعادة البيانات التجريبية</button></div>`:''}</div>`}
-};
+/* ---------- modals ---------- */
+function modal(t,body,foot,wide){closeM();const o=document.createElement('div');o.className='ov';o.id='ov';o.innerHTML=`<div class="md ${wide?'wide':''}"><div class="hd"><h3>${t}</h3><button class="btn ghost sm" data-act="close">${ic('x',16)}</button></div><div class="bd">${body}</div>${foot?`<div class="ft">${foot}</div>`:''}</div>`;o.addEventListener('mousedown',e=>{if(e.target===o)closeM()});document.body.appendChild(o);const f=o.querySelector('input,textarea,select');f&&f.focus()}
+function closeM(){$('#ov')?.remove()}
+const opt=(a,v)=>a.map(x=>`<option ${x===v?'selected':''}>${x}</option>`).join('');
+const pplOpt=v=>D.people.map(p=>`<option value="${p.id}" ${p.id===v?'selected':''}>${esc(p.name)}</option>`).join('');
+const FORMS={
+ req:d=>`<div class="fg"><div class="f full"><label>عنوان الطلب</label><input class="in" name="title" value="${esc(d.title)}" required></div><div class="f"><label>النوع</label><select class="in" name="type">${opt(['أكاديمي','موارد بشرية','مالي','بحثي','طلابي','أخرى'],d.type)}</select></div><div class="f"><label>مقدم الطلب</label><input class="in" name="applicant" value="${esc(d.applicant||(d.id?'':me().name))}"></div><div class="f"><label>الأولوية</label><select class="in" name="priority">${opt(['منخفضة','متوسطة','عالية'],d.priority||'متوسطة')}</select></div><div class="f"><label>الموعد المطلوب</label><input class="in" type="date" name="due" value="${esc(d.due)}"></div><div class="f full"><label>التفاصيل</label><textarea class="in" name="details">${esc(d.details)}</textarea></div></div>`,
+ task:d=>{const own=d.id&&d.owner===me().id&&!CAN('task','e');return`<div class="fg"><div class="f full"><label>المهمة</label><input class="in" name="title" value="${esc(d.title)}" ${own?'disabled':''}></div><div class="f"><label>المسؤول</label><select class="in" name="owner" ${own?'disabled':''}>${pplOpt(d.owner||me().id)}</select></div><div class="f"><label>الموعد</label><input class="in" type="date" name="due" value="${esc(d.due)}" ${own?'disabled':''}></div><div class="f"><label>الحالة</label><select class="in" name="status">${opt(['لم تبدأ','جارية','مكتملة'],d.status||'لم تبدأ')}</select></div><div class="f"><label>نسبة الإنجاز %</label><input class="in" type="number" min="0" max="100" name="progress" value="${esc(d.progress||0)}"></div><div class="f"><label>الأولوية</label><select class="in" name="priority" ${own?'disabled':''}>${opt(['منخفضة','متوسطة','عالية'],d.priority||'متوسطة')}</select></div><div class="f full"><label>تفاصيل</label><textarea class="in" name="details" ${own?'disabled':''}>${esc(d.details)}</textarea></div></div>`},
+ dec:d=>`<div class="fg"><div class="f full"><label>عنوان القرار / التعميم</label><input class="in" name="title" value="${esc(d.title)}"></div><div class="f"><label>الرقم</label><input class="in" name="no" value="${esc(d.no)}"></div><div class="f"><label>الفئة المستهدفة</label><input class="in" name="audience" value="${esc(d.audience||'الجميع')}"></div><div class="f"><label>تاريخ الإصدار</label><input class="in" type="date" name="date" value="${esc(d.date||today())}"></div><div class="f"><label>ساري حتى</label><input class="in" type="date" name="until" value="${esc(d.until)}"></div><div class="f full"><label>النص</label><textarea class="in" name="body" style="min-height:140px">${esc(d.body)}</textarea></div></div>`,
+ kpi:d=>`<div class="fg"><div class="f full"><label>اسم المؤشر</label><input class="in" name="name" value="${esc(d.name)}"></div><div class="f"><label>المستهدف</label><input class="in" name="target" value="${esc(d.target)}"></div><div class="f"><label>القيمة الفعلية</label><input class="in" name="actual" value="${esc(d.actual)}"></div><div class="f"><label>الوحدة</label><input class="in" name="unit" value="${esc(d.unit||'%')}"></div><div class="f"><label>الاتجاه</label><select class="in" name="better"><option value="high" ${d.better!=='low'?'selected':''}>الأعلى أفضل</option><option value="low" ${d.better==='low'?'selected':''}>الأقل أفضل</option></select></div><div class="f"><label>الفترة</label><input class="in" name="period" value="${esc(d.period)}"></div><div class="f"><label>المسؤول</label><select class="in" name="owner"><option value="">—</option>${pplOpt(d.owner)}</select></div></div>`};
+const MN={req:'الطلب',task:'المهمة',dec:'القرار',kpi:'المؤشر'};
+function openDoc(m,id){const d=id?(D[m]||[]).find(x=>x.id===id):{};if(!d)return;
+ const canEdit=!id?CAN(m,'a'):(CAN(m,'e')||(m==='task'&&d.owner===me().id));
+ if(m==='req'&&id){const hist=(d.hist||[]).map(h=>`<div><b>${esc(h.s)}</b> — ${esc(pname(h.by))} <span class="muted small">${ago(h.at)}</span>${h.note?`<div class="small muted">${esc(h.note)}</div>`:''}</div>`).join('');
+  const apBtns=CAN('req','ap')&&['جديد','قيد الدراسة'].includes(d.status)?`<button class="btn ok" data-st="معتمد" data-rid="${id}">${ic('check',16)}اعتماد</button><button class="btn" data-st="قيد الدراسة" data-rid="${id}">قيد الدراسة</button><button class="btn bad" data-st="مرفوض" data-rid="${id}">رفض</button>`:'';
+  return modal(esc(d.title),`<div class="row" style="margin-bottom:12px"><span class="pill ${RS[d.status]}">${esc(d.status)}</span><span class="muted small">${esc(d.type||'')} · ${esc(d.applicant||pname(d.by))} · الموعد ${fmtD(d.due)} · أولوية ${esc(d.priority||'—')}</span></div>${d.details?`<p>${esc(d.details)}</p>`:''}
+  ${apBtns?`<div class="f" style="margin:14px 0"><label>ملاحظة القرار (اختياري)</label><input class="in" id="stNote"></div>`:''}<h4 style="margin:16px 0 8px">مسار الطلب</h4><div class="tl">${hist}</div>`,
+  `${apBtns}${CAN('req','e')?`<button class="btn" data-edit="req:${id}">تعديل</button>`:''}${CAN('req','d')?`<button class="btn bad" data-del="req:${id}">حذف</button>`:''}`)}
+ if(!canEdit&&id){const body=m==='dec'?`<div class="row" style="margin-bottom:10px">${decPill(d)}<span class="muted small">رقم ${esc(d.no||'—')} · ${fmtD(d.date)} ← ${d.until?fmtD(d.until):'مفتوح'} · ${esc(d.audience||'')}</span></div><p style="white-space:pre-wrap">${esc(d.body)}</p>`:`<pre style="font-family:inherit;white-space:pre-wrap">${esc(d.title||d.name)}</pre>`;return modal(esc(d.title||d.name),body,CAN(m,'d')?`<button class="btn bad" data-del="${m}:${id}">حذف</button>`:'')}
+ modal((id?'تعديل ':'إضافة ')+MN[m],`<form id="df">${FORMS[m](d)}</form>`,`<button class="btn pri" data-save="${m}:${id||''}">حفظ</button><button class="btn" data-act="close">إلغاء</button>${id&&CAN(m,'d')?`<button class="btn bad" data-del="${m}:${id}" style="margin-inline-start:auto">حذف</button>`:''}`)}
+const PL={v:'عرض',a:'إضافة',e:'تعديل',d:'حذف',ap:'اعتماد'};
+function userModal(id){const u=id?D.users.find(x=>x.id===id):{perms:{},active:true,preset:'staff'};if(!id)u.perms=PRESETS.staff.p();const P=JSON.parse(JSON.stringify(u.perms||{}));
+ const mx=()=>`<table class="mx"><tr><th>الوحدة</th>${Object.values(PL).map(p=>`<th>${p}</th>`).join('')}</tr>${D.mods.map(m=>`<tr><td>${m.n}</td>${Object.keys(PL).map(p=>(m.viewOnly&&p!=='v')||(p==='ap'&&!m.ap)?'<td class="muted">—</td>':`<td><input type="checkbox" data-pm="${m.k}.${p}" ${P[m.k]?.[p]?'checked':''} ${u.admin?'disabled checked':''}></td>`).join('')}</tr>`).join('')}</table>`;
+ modal(id?'تعديل المستخدم والصلاحيات':'مستخدم جديد',`<div class="fg"><div class="f"><label>الاسم</label><input class="in" id="uN" value="${esc(u.name)}"></div><div class="f"><label>اسم الدخول (إنجليزي)</label><input class="in" id="uI" dir="ltr" value="${esc(u.id)}" ${id?'disabled':''} placeholder="ahmed"></div>
+ <div class="f"><label>الصفة / المنصب</label><input class="in" id="uT" value="${esc(u.title)}" placeholder="عميد الكلية، رئيس قسم، سكرتير…"></div><div class="f"><label>البريد الإلكتروني</label><input class="in" id="uE" dir="ltr" value="${esc(u.email)}"></div>
+ <div class="f full"><label>${id?'كلمة مرور جديدة (اتركها فارغة لعدم التغيير)':'كلمة المرور'}</label><div class="row"><input class="in" id="uP" dir="ltr" style="flex:1" autocomplete="new-password"><button class="btn" type="button" data-act="genPw">توليد كلمة قوية</button></div><div class="small muted" style="margin-top:4px">10 أحرف على الأقل. سيُطلب من المستخدم تغييرها عند أول دخول.</div></div></div>
+ ${id==='khaled'?'':`<div class="row" style="margin:14px 0"><label class="sw"><input type="checkbox" id="uA" ${u.active?'checked':''}> الحساب مفعّل</label><label class="sw"><input type="checkbox" id="uAd" ${u.admin?'checked':''}> مدير نظام (كل الصلاحيات + إدارة المستخدمين)</label></div>`}
+ <div class="row" style="margin:14px 0 8px"><b style="flex:1">الصلاحيات</b><span class="small muted">قالب جاهز:</span>${Object.entries(D.presets).map(([k,n])=>`<button class="chip" type="button" data-preset="${k}">${n}</button>`).join('')}</div><div id="mxw">${mx()}</div>`,
+ `<button class="btn pri" data-act="userSave" data-id="${id||''}">حفظ</button><button class="btn" data-act="close">إلغاء</button>${id&&id!=='khaled'?`<button class="btn bad" data-act="userDel" data-id="${id}" style="margin-inline-start:auto">حذف المستخدم</button>`:''}`,true);
+ const ov=$('#ov');ov._P=P;ov._u=u;ov.addEventListener('click',e=>{const pr=e.target.closest('[data-preset]');if(pr){Object.assign(P,PRESETS[pr.dataset.preset].p());ov._preset=pr.dataset.preset;$('#mxw').innerHTML=mx()}});
+ ov.addEventListener('change',e=>{const c=e.target.closest('[data-pm]');if(c){const[m,p]=c.dataset.pm.split('.');P[m]=P[m]||{};P[m][p]=c.checked?1:0;if(p!=='v'&&c.checked){P[m].v=1;$('#mxw').innerHTML=mx()}if(p==='v'&&!c.checked){P[m]={v:0};$('#mxw').innerHTML=mx()}}})}
+function pwModal(force){modal(force?'يرجى تعيين كلمة مرور جديدة':'تغيير كلمة المرور',`<div class="fg"><div class="f full"><label>كلمة المرور الحالية</label><input class="in" type="password" id="po" dir="ltr"></div><div class="f full"><label>كلمة المرور الجديدة (10 أحرف على الأقل)</label><input class="in" type="password" id="pn" dir="ltr" autocomplete="new-password"></div></div><div class="err" id="pe"></div>`,`<button class="btn pri" data-act="pwSave">حفظ</button>${force?'':'<button class="btn" data-act="close">إلغاء</button>'}`)}
+const genPw=()=>{const a='ABCDEFGHJKLMNPQRSTUVWXYZ',b='abcdefghijkmnpqrstuvwxyz',c='23456789',d='#@$%&*!?';const r=s=>s[crypto.getRandomValues(new Uint32Array(1))[0]%s.length];let p=r(a)+r(b)+r(c)+r(d);for(let i=0;i<10;i++)p+=r(a+b+c+d);return p.split('').sort(()=>Math.random()-.5).join('')};
 
-function render(){
- const u=me(),tabs=[['home','الرئيسية'],...Object.keys(M).filter(m=>can(m,'v')).map(m=>[m,M[m]])];
- if(!tabs.some(t=>t[0]===tab))tab='home';
- $('#app').innerHTML=`<header><div><h1>نظام إدارة القسم</h1><small>${esc(u.name)} — ${R[u.role]}</small></div><label class="who">الدخول كـ<select data-chg="me">${S.users.map(x=>`<option value="${x.id}" ${x.id===S.me?'selected':''}>${esc(x.name)} — ${R[x.role]}</option>`).join('')}</select></label></header>
- <nav>${tabs.map(t=>`<button class="${t[0]===tab?'on':''}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join('')}</nav>
- <main>${views[tab]()}</main><footer>إعداد وفكرة وتصميم د. خالد البلوي — جميع الحقوق محفوظة</footer>`;
-}
-const acts={
- tab:d=>{tab=d.id;render()},tf:d=>{tf=d.id;render()},pr:d=>{pr=d.id;render()},
- add:d=>{const c=cfg[d.m];form('إضافة',c.f(),c.def(),o=>{S[d.m].push({id:uid(),...c.def(),...o})})},
- edit:d=>{const c=cfg[d.m],x=S[d.m].find(i=>i.id===d.id);form('تعديل',c.f(),x,o=>Object.assign(x,o))},
- del:d=>ask('تأكيد الحذف؟',()=>{S[d.m]=S[d.m].filter(i=>i.id!==d.id)}),
- reset:()=>ask('سيتم مسح كل البيانات والرجوع للبيانات التجريبية. متأكد؟',()=>{S=seed()}),
- me:(d,t)=>{S.me=t.value;save();render()},
- tst:(d,t)=>{S.tasks.find(x=>x.id===d.id).status=t.value;save();render()},
- urole:(d,t)=>{S.users.find(x=>x.id===d.id).role=t.value;save();render()},
- perm:(d,t)=>{S.perms[pr][d.m][d.a]=t.checked;save();render()}
-};
-document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(t&&acts[t.dataset.act])acts[t.dataset.act](t.dataset,t)});
-document.addEventListener('change',e=>{const t=e.target.closest('[data-chg]');if(t&&acts[t.dataset.chg])acts[t.dataset.chg](t.dataset,t)});
-render();
+/* ---------- events ---------- */
+async function act(fn,ok){try{await fn();if(ok)toast(ok);closeM();D=await API('boot');render()}catch(e){toast(errMsg(e))}}
+document.addEventListener('click',async e=>{const t=e.target.closest('[data-go],[data-act],[data-open],[data-new],[data-save],[data-del],[data-edit],[data-st],[data-freq],[data-user],[data-nt]');
+ if(POP&&!e.target.closest('#pop')&&!e.target.closest('[data-act=bell]')){POP=false;$('#pop')?.remove()}
+ if(!t)return;const ds=t.dataset;
+ if(ds.nt){API('read',{id:ds.nt}).catch(()=>{});const n=D.notif.find(x=>x.id===ds.nt);if(n)n.read=true}
+ if(ds.go){PAGE=ds.go;F.q='';POP=false;location.hash=PAGE;$('#nav')?.classList.remove('open');render();scrollTo(0,0);return}
+ if(ds.open){const[m,id]=ds.open.split(':');return openDoc(m,id)}
+ if(ds.new)return openDoc(ds.new);
+ if(ds.edit){const[m,id]=ds.edit.split(':');const d=D[m].find(x=>x.id===id);return modal('تعديل '+MN[m],`<form id="df">${FORMS[m](d)}</form>`,`<button class="btn pri" data-save="${m}:${id}">حفظ</button><button class="btn" data-act="close">إلغاء</button>`)}
+ if(ds.save){const[m,id]=ds.save.split(':');const f=$('#df');const doc={id:id||undefined};f.querySelectorAll('[name]').forEach(i=>{if(!i.disabled)doc[i.name]=i.value});if(!(doc.title||doc.name||'').trim()&&!(id&&m==='task'))return toast('العنوان مطلوب');return act(()=>API('save',{mod:m,doc}),'تم الحفظ')}
+ if(ds.del){const[m,id]=ds.del.split(':');if(!confirm('تأكيد الحذف؟ لا يمكن التراجع.'))return;return act(()=>API('del',{mod:m,id}),'تم الحذف')}
+ if(ds.st)return act(()=>API('save',{mod:'req',doc:{id:ds.rid,status:ds.st,note:$('#stNote')?.value||''}}),'تم: '+ds.st);
+ if(ds.freq){F.req=ds.freq;return render()}
+ if(ds.user)return userModal(ds.user);
+ switch(ds.act){
+  case'close':return closeM();
+  case'menu':return $('#nav').classList.toggle('open');
+  case'bell':POP=!POP;render();return;
+  case'readAll':return act(()=>API('read'));
+  case'logout':await API('logout').catch(()=>{});D=null;return renderLogin();
+  case'pw':return pwModal(false);
+  case'pwSave':try{await API('pw',{old:$('#po').value,pass:$('#pn').value});closeM();toast('تم تغيير كلمة المرور')}catch(er){$('#pe').textContent=errMsg(er)}return;
+  case'userNew':return userModal();
+  case'genPw':$('#uP').value=genPw();return;
+  case'userSave':{const ov=$('#ov'),id=ds.id;const u={id:id||$('#uI').value,name:$('#uN').value,title:$('#uT').value,email:$('#uE').value,perms:ov._P,preset:ov._preset||ov._u.preset,active:$('#uA')?$('#uA').checked:true,admin:$('#uAd')?$('#uAd').checked:!!ov._u.admin};
+   const pass=$('#uP').value;return act(()=>API('user',{user:u,pass:pass||undefined,temp:!!pass&&id!=='khaled'}),id?'تم تحديث المستخدم':'تم إنشاء المستخدم')}
+  case'userDel':if(!confirm('حذف هذا المستخدم نهائياً؟'))return;return act(()=>API('userDel',{id:ds.id}),'تم الحذف');
+  case'seed':return act(()=>API('seed'),'تم تحميل البيانات التجريبية');
+  case'wipe':if(!confirm('مسح كل الطلبات والمهام والقرارات والمؤشرات؟'))return;return act(()=>API('wipe'),'تم المسح');
+ }});
+document.addEventListener('input',e=>{if(e.target.id==='q'){F.q=e.target.value.trim();const p=e.target.selectionStart;render();const q=$('#q');q.focus();q.setSelectionRange(p,p)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();if(POP){POP=false;$('#pop')?.remove()}}});
+addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(D&&h&&h!==PAGE){PAGE=h;render()}});
+if(SRV)setInterval(async()=>{if(!D||document.hidden||$('#ov'))return;try{const n=await API('boot');const newN=n.notif.filter(x=>!x.read&&!D.notif.some(y=>y.id===x.id));D=n;render();if(newN.length)toast('🔔 '+newN[0].text)}catch{}},30000);
+load();
 </script>
 </body>
 </html>
