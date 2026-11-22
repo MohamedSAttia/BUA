@@ -1,120 +1,156 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>منصة متابعة القسم</title>
+<title>نظام متابعة أعمال القسم</title>
 <!--SRV-->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F4F6FA;--card:#fff;--ink:#14213D;--ink2:#4A5672;--mute:#8A94AA;--line:#E3E7EF;--pri:#1F4E8C;--pri2:#2E6BC0;--priL:#E8F0FB;--ok:#1E8E5A;--okL:#E3F5EC;--warn:#B7791F;--warnL:#FDF3E1;--bad:#C0392B;--badL:#FBE9E7;--r:14px;--sh:0 1px 2px rgba(20,33,61,.05),0 4px 16px rgba(20,33,61,.06)}
-*{box-sizing:border-box}html,body{margin:0;height:100%}
-body{font-family:"IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.6}
+:root{--bg:#0A1630;--bg2:#0E1D3D;--sf:#12264A;--sf2:#18305A;--line:#264372;--tx:#F1F5FC;--tx2:#B9C8E2;--mu:#8EA3C6;--pri:#3B82F6;--priL:rgba(59,130,246,.16);--ok:#34C38F;--okL:rgba(52,195,143,.16);--warn:#F2B54E;--warnL:rgba(242,181,78,.16);--bad:#F2726B;--badL:rgba(242,114,107,.16);--hd:linear-gradient(90deg,#1B3A8C,#2B53B8);--r:18px;--sh:0 10px 30px rgba(0,0,0,.25);--fs:17px}
+html[data-theme=light]{--bg:#EEF2F8;--bg2:#F6F8FC;--sf:#FFFFFF;--sf2:#F3F6FB;--line:#DCE3EE;--tx:#14213D;--tx2:#3E4C66;--mu:#6B7A96;--pri:#1F5FD1;--priL:#E6EFFC;--ok:#17855A;--okL:#E2F4EC;--warn:#A86A06;--warnL:#FCF1DD;--bad:#C2392F;--badL:#FBE7E5;--sh:0 6px 20px rgba(20,33,61,.08)}
+html.big{--fs:19.5px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{font-family:"IBM Plex Sans Arabic",system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--tx);font-size:var(--fs);line-height:1.65}
 button,input,select,textarea{font:inherit;color:inherit}
-a{color:var(--pri2)}
-.hide{display:none!important}
-/* login */
-.login{min-height:100%;display:grid;grid-template-columns:1.1fr 1fr}
-.login .side{background:linear-gradient(160deg,#16325C,#1F4E8C 55%,#2E6BC0);color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
-.login .side h1{font-size:34px;line-height:1.35;margin:0 0 14px}.login .side p{opacity:.85;font-size:16px;max-width:460px;margin:0 0 28px}
-.login .side ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}.login .side li{display:flex;gap:10px;align-items:center;opacity:.92}
-.login .side li i{width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-style:normal}
-.login .side:after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;border:60px solid rgba(255,255,255,.05);inset-inline-start:-160px;bottom:-200px}
-.login form{align-self:center;justify-self:center;width:min(380px,90%);display:grid;gap:14px}
-.login form h2{margin:0;font-size:24px}.login form p{margin:0;color:var(--ink2)}
-.f label{display:block;font-size:13px;color:var(--ink2);margin-bottom:6px;font-weight:600}
-.in{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;outline:none;transition:border .15s,box-shadow .15s}
-.in:focus{border-color:var(--pri2);box-shadow:0 0 0 3px rgba(46,107,192,.15)}
-textarea.in{min-height:90px;resize:vertical}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:600;transition:.15s;white-space:nowrap}
-.btn:hover{border-color:#c9d1e0;background:#FAFBFD}
-.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}.btn.pri:hover{background:var(--pri2)}
-.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}.btn.bad{background:#fff;border-color:#f0c4bd;color:var(--bad)}
-.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}.btn.lg{padding:12px 18px;font-size:15px}
-.btn.ghost{background:transparent;border-color:transparent}.btn.ghost:hover{background:var(--priL)}
-.err{color:var(--bad);font-size:13px;min-height:18px}
-.demo-note{background:var(--warnL);color:#7a520f;border-radius:10px;padding:10px 12px;font-size:13px}
-/* shell */
-.app{display:grid;grid-template-columns:240px 1fr;min-height:100%}
-.nav{background:#fff;border-inline-end:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
-.brand{font-weight:700;font-size:16px;padding:6px 10px 18px;line-height:1.4}.brand small{display:block;color:var(--mute);font-weight:500;font-size:12px}
-.nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--ink2);text-decoration:none;font-weight:600;cursor:pointer}
-.nav a:hover{background:var(--bg)}.nav a.on{background:var(--priL);color:var(--pri)}
-.nav a .cnt{margin-inline-start:auto;background:var(--bad);color:#fff;border-radius:20px;font-size:11px;padding:0 7px;line-height:18px}
-.nav .sep{height:1px;background:var(--line);margin:10px 6px}
-.nav .foot{margin-top:auto;font-size:11.5px;color:var(--mute);padding:10px;line-height:1.6}
-.ico{width:18px;height:18px;flex:none}
-.main{min-width:0;display:flex;flex-direction:column}
-.top{display:flex;align-items:center;gap:12px;padding:14px 28px;background:rgba(244,246,250,.85);backdrop-filter:blur(8px);position:sticky;top:0;z-index:5}
-.top h1{font-size:20px;margin:0}.top .sp{flex:1}
-.bell{position:relative}.bell .dot{position:absolute;top:2px;inset-inline-end:2px;background:var(--bad);color:#fff;font-size:10.5px;border-radius:10px;padding:0 5px;line-height:16px;font-weight:700}
-.who{display:flex;align-items:center;gap:9px;padding:5px 10px 5px 5px;border-radius:30px;background:#fff;border:1px solid var(--line);cursor:pointer}
-.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
-.who b{font-size:13px;display:block;line-height:1.2}.who small{font-size:11px;color:var(--mute)}
-.page{padding:6px 28px 40px;max-width:1280px;width:100%}
-.menu-btn{display:none}
-/* cards & grid */
-.grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}.g21{grid-template-columns:2fr 1fr}
-.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px}
-.card h3{margin:0 0 12px;font-size:15.5px;display:flex;align-items:center;gap:8px}.card h3 .sp{flex:1}
-.tile{display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform .15s}.tile:hover{transform:translateY(-2px)}
-.tile .ti{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;flex:none}
-.tile .n{font-size:26px;font-weight:700;line-height:1.1}.tile .l{color:var(--ink2);font-size:13px}
-.hello{display:flex;align-items:flex-end;gap:12px;margin:6px 0 18px}.hello h2{margin:0;font-size:22px}.hello p{margin:0;color:var(--ink2)}
-.muted{color:var(--mute)}.small{font-size:12.5px}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.list{display:flex;flex-direction:column}
-.li{display:flex;gap:12px;align-items:center;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}.li:last-child{border-bottom:0}.li:hover{background:#FAFBFD}
-.li .t{flex:1;min-width:0}.li .t b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.li .t small{color:var(--mute)}
-.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
-.p-new{background:var(--priL);color:var(--pri)}.p-wait{background:var(--warnL);color:var(--warn)}.p-ok{background:var(--okL);color:var(--ok)}.p-bad{background:var(--badL);color:var(--bad)}.p-gray{background:#EEF1F6;color:var(--ink2)}
-.bar{height:8px;background:#EDF0F5;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;border-radius:6px;background:var(--pri2)}
-.empty{text-align:center;color:var(--mute);padding:30px 10px}
-/* toolbar & table */
-.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
-.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink2)}.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-.search{flex:1;min-width:180px;max-width:320px}
-table{width:100%;border-collapse:collapse}th{font-size:12.5px;color:var(--mute);font-weight:600;text-align:start;padding:10px;border-bottom:1px solid var(--line)}
-td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}tr.click{cursor:pointer}tr.click:hover td{background:#FAFBFD}
+.ico{width:1.15em;height:1.15em;flex:none}
+.hdr{height:68px;background:var(--hd);display:flex;align-items:center;gap:14px;padding:0 22px;position:sticky;top:0;z-index:10;color:#fff}
+.hdr:after{content:"";position:absolute;inset-inline:0;bottom:0;height:3px;background:linear-gradient(90deg,#22C1C3,#7FD36B)}
+.hdr .ttl b{display:block;font-size:1.12em;line-height:1.25}.hdr .ttl small{opacity:.8;font-size:.78em}
+.hdr .sp{flex:1}
+.hb{height:44px;min-width:44px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-weight:600;position:relative}
+.hb:hover{background:rgba(255,255,255,.2)}
+.hb .dot{position:absolute;top:-6px;inset-inline-end:-6px;background:#F2726B;color:#fff;font-size:12px;border-radius:12px;padding:0 7px;line-height:20px;font-weight:700;border:2px solid #2B53B8}
+.me{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:5px 12px 5px 6px;cursor:pointer}
+.me b{display:block;font-size:.88em;line-height:1.3}.me small{font-size:.74em;opacity:.8}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:.85em;flex:none;border:2px solid rgba(255,255,255,.35)}
+.wrap{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 68px - 44px)}
+.side{background:var(--bg2);border-inline-start:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:6px}
+.side a{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:14px;color:var(--tx2);text-decoration:none;font-weight:600;font-size:1.05em;cursor:pointer;border:1px solid transparent}
+.side a .ico{width:1.35em;height:1.35em}
+.side a:hover{background:var(--sf)}.side a.on{background:var(--priL);color:var(--tx);border-color:var(--pri)}
+.side a.on .ico{color:var(--pri)}
+.side .cnt{margin-inline-start:auto;background:var(--bad);color:#fff;border-radius:20px;font-size:.78em;padding:0 10px;line-height:24px}
+.side .sep{height:1px;background:var(--line);margin:10px 4px}
+.main{min-width:0;padding:26px 30px 40px}
+.foot{height:44px;border-top:1px solid var(--line);background:var(--bg2);display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:.8em;color:var(--mu)}
+.foot b{color:var(--tx2)}
+.tabbar{display:none}
+h1.pg{font-size:1.75em;margin:0 0 4px}.sub{color:var(--mu);margin:0 0 22px}
+.grid{display:grid;gap:18px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}.g21{grid-template-columns:1.6fr 1fr}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--sh)}
+.card h3{margin:0 0 16px;font-size:1.15em;display:flex;align-items:center;gap:10px}.card h3 .sp{flex:1}
+.card h3 .ico{color:var(--pri)}
+.tile{cursor:pointer;display:flex;align-items:center;gap:16px;transition:transform .15s,border-color .15s}
+.tile:hover{transform:translateY(-3px);border-color:var(--pri)}
+.tile .ti{width:60px;height:60px;border-radius:16px;display:grid;place-items:center;flex:none}.tile .ti .ico{width:30px;height:30px}
+.tile .n{font-size:2.3em;font-weight:700;line-height:1.1}.tile .l{color:var(--tx2);font-size:.95em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:12px;border:1px solid var(--line);background:var(--sf2);cursor:pointer;font-weight:700;white-space:nowrap;transition:.15s;color:var(--tx)}
+.btn:hover{filter:brightness(1.12)}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#06281A}
+html[data-theme=light] .btn.ok{color:#fff}
+.btn.bad{background:transparent;border-color:var(--bad);color:var(--bad)}
+.btn.warn{background:transparent;border-color:var(--warn);color:var(--warn)}
+.btn.lg{min-height:56px;font-size:1.08em;padding:0 26px}
+.btn.sm{min-height:38px;padding:0 14px;font-size:.88em}
+.btn.ghost{background:transparent;border-color:transparent}
+.muted{color:var(--mu)}.small{font-size:.86em}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 14px;border-radius:30px;font-size:.84em;font-weight:700;white-space:nowrap}
+.p-blue{background:var(--priL);color:var(--pri)}.p-warn{background:var(--warnL);color:var(--warn)}.p-ok{background:var(--okL);color:var(--ok)}.p-bad{background:var(--badL);color:var(--bad)}.p-gray{background:var(--sf2);color:var(--tx2)}
+.bar{height:10px;background:var(--sf2);border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;border-radius:8px;background:var(--pri)}
+.empty{text-align:center;color:var(--mu);padding:30px 10px}
+.hello{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.hello .av{width:56px;height:56px;font-size:1.3em}
+.hello h1{font-size:1.9em;margin:0;line-height:1.3}.hello p{margin:0;color:var(--tx2)}
+.pipe{display:flex;align-items:stretch}
+.stg{flex:1;min-width:0;background:var(--sf2);border:1px solid var(--line);border-radius:16px;padding:14px 8px;text-align:center;cursor:pointer;transition:.15s}
+.stg:hover{border-color:var(--pri)}
+.stg .n{font-size:2.2em;font-weight:700;line-height:1.1}.stg .l{color:var(--tx2);font-weight:600;font-size:.86em;line-height:1.35}
+.stg.cur{border-color:var(--warn);background:var(--warnL)}.stg.done{border-color:var(--ok);background:var(--okL)}
+.arr{width:26px;display:grid;place-items:center;color:var(--mu)}.arr .ico{width:28px;height:28px}
+.side-st{display:flex;gap:12px;margin-top:14px}.side-st .stg{padding:10px}.side-st .n{font-size:1.4em}
+.steps{display:flex;align-items:flex-start;margin:14px 0 6px}
+.st{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;font-size:.8em;color:var(--mu);font-weight:600}
+.st i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--sf2);border:2px solid var(--line);font-style:normal;font-weight:700;color:var(--mu);position:relative;z-index:1;margin-bottom:6px;font-size:1.1em}
+.st:before{content:"";position:absolute;top:16px;left:50%;width:100%;height:3px;background:var(--line)}
+.st:first-child:before{display:none}
+.st.done{color:var(--ok)}.st.done i{background:var(--ok);border-color:var(--ok);color:#06281A}.st.done:before{background:var(--ok)}
+.st.cur{color:var(--warn)}.st.cur i{background:var(--warnL);border-color:var(--warn);color:var(--warn);animation:pulse 1.6s infinite}.st.cur:before{background:var(--ok)}
+.st.bad{color:var(--bad)}.st.bad i{background:var(--bad);border-color:var(--bad);color:#fff}.st.bad:before{background:var(--bad)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(242,181,78,.55)}70%{box-shadow:0 0 0 10px rgba(242,181,78,0)}100%{box-shadow:0 0 0 0 rgba(242,181,78,0)}}
+.dc{background:var(--sf2);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+.dc .t{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.dc .t b{font-size:1.08em;flex:1;min-width:200px;cursor:pointer}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.rq{background:var(--sf);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;margin-bottom:14px;cursor:pointer;transition:border-color .15s}
+.rq:hover{border-color:var(--pri)}
+.rq .t{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.rq .t b{font-size:1.1em;flex:1;min-width:200px}
+.tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{min-height:42px;padding:0 18px;border-radius:30px;border:1px solid var(--line);background:var(--sf);cursor:pointer;font-weight:700;color:var(--tx2)}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.in{width:100%;min-height:50px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);color:var(--tx);outline:none}
+.in:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--priL)}
+textarea.in{min-height:100px;resize:vertical}
+select.in option{background:var(--bg2)}
+.search{max-width:320px}
+.f label{display:block;font-size:.9em;color:var(--tx2);margin-bottom:6px;font-weight:600}
+.kan{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}
+.col{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.col h4{margin:2px 4px 14px;font-size:1.05em;display:flex;gap:10px;align-items:center}
+.kc{background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer;border-inline-start:5px solid var(--pri)}
+.kc.late{border-inline-start-color:var(--bad)}.kc.done{border-inline-start-color:var(--ok)}
+.kc b{display:block;margin-bottom:10px}
+table{width:100%;border-collapse:collapse}th{font-size:.86em;color:var(--mu);font-weight:600;text-align:start;padding:12px;border-bottom:1px solid var(--line)}
+td{padding:14px 12px;border-bottom:1px solid var(--line)}tr.click{cursor:pointer}tr.click:hover td{background:var(--sf2)}
 .tbl{overflow-x:auto}
-/* kanban */
-.kan{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
-.col{background:#EBEEF4;border-radius:var(--r);padding:12px}.col h4{margin:2px 4px 10px;font-size:14px;display:flex;gap:8px;align-items:center}
-.kc{background:#fff;border-radius:11px;padding:12px;margin-bottom:10px;box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:pointer;border-inline-start:3px solid transparent}
-.kc.late{border-inline-start-color:var(--bad)}.kc b{display:block;margin-bottom:6px}.kc .row{justify-content:space-between}
-/* kpi */
-.kpi .big{font-size:28px;font-weight:700}.kpi .tg{color:var(--mute);font-size:13px}
-/* modal & drawer */
-.ov{position:fixed;inset:0;background:rgba(20,33,61,.35);z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;animation:fd .15s}
-.md{background:#fff;border-radius:16px;width:min(640px,100%);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:up .18s}
-.md.wide{width:min(900px,100%)}
-.md .hd{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.md .hd h3{margin:0;font-size:17px;flex:1}
-.md .bd{padding:18px 20px;overflow:auto}.md .ft{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-start;flex-wrap:wrap}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}.fg .full{grid-column:1/-1}
-@keyframes fd{from{opacity:0}}@keyframes up{from{transform:translateY(12px);opacity:0}}
-.pop{position:absolute;top:58px;inset-inline-end:28px;width:min(380px,92vw);background:#fff;border-radius:14px;box-shadow:0 14px 40px rgba(20,33,61,.18);z-index:15;overflow:hidden;animation:up .15s}
-.pop .hd{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}.pop .hd b{flex:1}
-.pop .bd{max-height:420px;overflow:auto}
-.nt{display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer}.nt:hover{background:#FAFBFD}.nt.unread{background:#F5F8FE}
-.nt .dt{width:8px;height:8px;border-radius:50%;background:var(--pri2);margin-top:8px;flex:none}.nt:not(.unread) .dt{background:transparent}
-.nt small{color:var(--mute);display:block}
-.toast{position:fixed;bottom:22px;inset-inline-start:50%;transform:translateX(50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;z-index:40;box-shadow:var(--sh);animation:up .2s}
-html[dir=rtl] .toast{transform:translateX(50%)}
-/* permission matrix */
-.mx{width:100%}.mx th,.mx td{text-align:center;padding:9px 6px}.mx td:first-child,.mx th:first-child{text-align:start}
-.mx input{width:18px;height:18px;accent-color:var(--pri)}
-.tl{border-inline-start:2px solid var(--line);padding-inline-start:14px;margin-inline-start:6px}.tl div{position:relative;padding:4px 0 10px}.tl div:before{content:"";position:absolute;inset-inline-start:-20px;top:10px;width:10px;height:10px;border-radius:50%;background:var(--pri2)}
-.sw{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2)}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:5px}
-.stack{display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;background:#fff}
-.stack i{display:block;height:100%}
-@media print{.nav,.top,.noprint{display:none!important}.app{display:block}.page{padding:0}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
-@media(max-width:980px){.g4{grid-template-columns:repeat(2,1fr)}.g3,.g21{grid-template-columns:1fr}.kan{grid-template-columns:1fr}}
-@media(max-width:760px){.login{grid-template-columns:1fr}.login .side{padding:32px 24px}.login .side h1{font-size:24px}.login .side ul{display:none}
- .app{grid-template-columns:1fr}.nav{position:fixed;inset-block:0;inset-inline-start:0;width:250px;z-index:30;transform:translateX(100%);transition:.2s;box-shadow:var(--sh)}
- html[dir=rtl] .nav{transform:translateX(100%)}.nav.open{transform:none!important}.menu-btn{display:inline-flex}
- .top{padding:12px 14px}.page{padding:6px 14px 30px}.g2,.fg{grid-template-columns:1fr}.who div{display:none}.pop{inset-inline-end:10px}}
+.ov{position:fixed;inset:0;background:rgba(3,8,20,.6);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;animation:fd .15s}
+.md{background:var(--sf);border:1px solid var(--line);border-radius:20px;width:min(680px,100%);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.45);animation:up .18s}
+.md.wide{width:min(920px,100%)}
+.md .hd{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.md .hd h3{margin:0;font-size:1.2em;flex:1}
+.md .bd{padding:20px 22px;overflow:auto}.md .ft{padding:16px 22px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:16px}.fg .full{grid-column:1/-1}
+@keyframes fd{from{opacity:0}}@keyframes up{from{transform:translateY(14px);opacity:0}}
+.tl{position:relative;padding-inline-start:34px}
+.tl:before{content:"";position:absolute;inset-inline-start:11px;top:6px;bottom:6px;width:3px;background:var(--line);border-radius:2px}
+.tl .ev{position:relative;padding-bottom:16px}
+.tl .ev i{position:absolute;inset-inline-start:-34px;top:4px;width:25px;height:25px;border-radius:50%;background:var(--sf2);border:3px solid var(--pri)}
+.tl .ev.ok i{border-color:var(--ok);background:var(--ok)}.tl .ev.bad i{border-color:var(--bad);background:var(--bad)}.tl .ev.warn i{border-color:var(--warn)}
+.tl .ev b{display:block}
+.pop{position:fixed;top:76px;inset-inline-end:20px;width:min(420px,94vw);background:var(--sf);border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.4);z-index:25;overflow:hidden;animation:up .15s}
+.pop .hd{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}.pop .hd b{flex:1;font-size:1.05em}
+.pop .bd{max-height:460px;overflow:auto}
+.nt{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer}.nt:hover{background:var(--sf2)}.nt.unread{background:var(--priL)}
+.nt small{color:var(--mu);display:block}
+.toast{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);background:var(--ok);color:#06281A;padding:14px 24px;border-radius:14px;z-index:50;font-weight:700;box-shadow:var(--sh);animation:up .2s}
+.lgn{min-height:100vh;display:flex;flex-direction:column}
+.lgn .box{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 16px}
+.lgn .panel{width:min(1080px,100%);display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--bg2);box-shadow:var(--sh)}
+.lgn .intro{background:linear-gradient(155deg,#1B3A8C,#2747A0 55%,#16336F);color:#fff;padding:44px;position:relative;overflow:hidden}
+.lgn .intro:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(127,211,107,.35),transparent 70%);inset-inline-end:-80px;bottom:-90px}
+.lgn .intro h2{font-size:2em;margin:0 0 12px;line-height:1.3}.lgn .intro p{opacity:.88;margin:0 0 24px}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1}
+.feat span{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-weight:600;font-size:.92em}
+.feat .ico{color:#9BE58A}
+.lgn form{padding:44px;display:flex;flex-direction:column;gap:16px;justify-content:center}
+.lgn form h2{margin:0;font-size:1.7em}
+.err{color:var(--bad);min-height:24px;font-weight:600}
+.demo{background:var(--warnL);color:var(--warn);border-radius:12px;padding:12px 14px;font-size:.9em}
+.mx th,.mx td{text-align:center;padding:12px 6px}.mx td:first-child,.mx th:first-child{text-align:start}
+.mx input{width:22px;height:22px;accent-color:var(--pri)}
+.sw{display:inline-flex;align-items:center;gap:10px;cursor:pointer}.sw input{width:20px;height:20px}
+@media print{.hdr,.side,.foot,.tabbar,.noprint{display:none!important}.wrap{display:block}.card{box-shadow:none;break-inside:avoid}}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g21,.g3{grid-template-columns:1fr}}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}.side{display:none}.main{padding:18px 14px 110px}.foot{display:none}
+ .tabbar{display:flex;position:fixed;bottom:0;inset-inline:0;background:var(--bg2);border-top:1px solid var(--line);z-index:20;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+ .tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;color:var(--mu);font-size:.72em;font-weight:700;text-decoration:none;position:relative}
+ .tabbar a .ico{width:26px;height:26px}.tabbar a.on{color:var(--pri)}
+ .tabbar .cnt{position:absolute;top:2px;left:50%;margin-left:6px;background:var(--bad);color:#fff;border-radius:10px;font-size:11px;padding:0 6px;line-height:18px}
+ .hdr{padding:0 12px;gap:8px}.hdr .ttl small,.me div,.hb .lbl{display:none}.g2,.fg{grid-template-columns:1fr}.kan{grid-template-columns:1fr}
+ .lgn .panel{grid-template-columns:1fr}.lgn .intro{padding:28px}.feat{display:none}.lgn form{padding:28px}
+ .pipe{flex-direction:column}.arr{width:auto;height:30px}.arr .ico{transform:rotate(-90deg)}.tile .n{font-size:2em}.g4{gap:12px}.tile{padding:16px;gap:12px}.tile .ti{width:48px;height:48px}.hello h1{font-size:1.5em}}
 </style>
 </head>
 <body>
@@ -124,194 +160,196 @@ html[dir=rtl] .toast{transform:translateX(50%)}
 "use strict";
 const SRV=!!document.querySelector('meta[name=srv]');
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const today=()=>new Date().toISOString().slice(0,10);
-const fmtD=d=>{if(!d)return'—';const x=new Date(d);return isNaN(x)?d:x.toLocaleDateString('ar-SA-u-ca-gregory-nu-latn',{day:'numeric',month:'short'})};
-const ago=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'الآن':m<60?`قبل ${m} د`:m<1440?`قبل ${Math.round(m/60)} س`:`قبل ${Math.round(m/1440)} يوم`};
+const LOC='ar-SA-u-ca-gregory-nu-latn',today=()=>new Date().toISOString().slice(0,10);
+const fmtD=d=>{if(!d)return'—';const x=new Date(d);return isNaN(x)?d:x.toLocaleDateString(LOC,{day:'numeric',month:'long'})};
+const fmtT=t=>new Date(t).toLocaleString(LOC,{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+const ago=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'الآن':m<60?`قبل ${m} دقيقة`:m<1440?`قبل ${Math.round(m/60)} ساعة`:`قبل ${Math.round(m/1440)} يوم`};
 const HUE=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))%360;return h};
-const av=(id,name)=>`<span class="av" style="background:hsl(${HUE(id)} 45% 42%)">${esc((name||id||'?').replace(/^(د\.|أ\.)\s*/,'').trim()[0]||'?')}</span>`;
-const I={home:'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',req:'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',task:'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9',dec:'M4 4h16v12H5.2L4 17.2zM8 9h8M8 12h5',kpi:'M4 20V10M10 20V4M16 20v-8M22 20H2',rep:'M6 2h9l5 5v15H6zM9 13h6M9 17h6M9 9h2',users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',bell:'M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0',plus:'M12 5v14M5 12h14',out:'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',menu:'M3 6h18M3 12h18M3 18h18',x:'M18 6L6 18M6 6l12 12',lock:'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',print:'M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z',alert:'M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0',check:'M20 6L9 17l-5-5',clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20M12 6v6l4 2'};
-const ic=(k,s=18)=>`<svg class="ico" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="${I[k]}"/></svg>`;
+const av=(id,name)=>`<span class="av" style="background:hsl(${HUE(id)} 50% 42%)">${esc((name||id||'?').replace(/^(د\.|أ\.)\s*/,'').trim()[0]||'?')}</span>`;
+const P={home:'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',req:'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',task:'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9',kpi:'M4 20V10M10 20V4M16 20v-8M22 20H2',rep:'M6 2h9l5 5v15H6zM9 13h6M9 17h6M9 9h2',users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',bell:'M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0',plus:'M12 5v14M5 12h14',out:'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',x:'M18 6L6 18M6 6l12 12',lock:'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',print:'M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z',alert:'M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0',check:'M20 6L9 17l-5-5',clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20M12 6v6l4 2',sun:'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4',moon:'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8',font:'M4 20l6-16h2l6 16M7 14h8',back:'M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-1',left:'M15 18l-6-6 6-6',flow:'M5 3v12M19 9v12M5 15a4 4 0 0 0 4 4h6M19 9a4 4 0 0 0-4-4H9'};
+const ic=(k,s)=>`<svg class="ico" ${s?`style="width:${s}px;height:${s}px"`:''} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${P[k]}"/></svg>`;
+const mem={},LSG=k=>{try{return localStorage.getItem(k)}catch{return mem[k]??null}},LSS=(k,v)=>{try{localStorage.setItem(k,v)}catch{mem[k]=v}};
+if(LSG('bs_theme'))document.documentElement.dataset.theme=LSG('bs_theme');if(LSG('bs_big')==='1')document.documentElement.classList.add('big');
 
-/* ---------- data layer: server API or in-browser demo ---------- */
 let API;
 if(SRV){API=async(act,b={})=>{const r=await fetch('/api/s',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({act,...b})});let j={};try{j=await r.json()}catch{}if(!r.ok)throw Object.assign(new Error(j.error||'err'),{code:r.status,j});return j}}
-else{const mem={};const LSG=k=>{try{return localStorage.getItem(k)}catch{return mem[k]??null}},LSS=(k,v)=>{try{localStorage.setItem(k,v)}catch{mem[k]=v}};
- const key=c=>'bs_'+c,rd=c=>{try{return JSON.parse(LSG(key(c))||'{}')}catch{return{}}};
+else{const key=c=>'bs2_'+c,rd=c=>{try{return JSON.parse(LSG(key(c))||'{}')}catch{return{}}};
  const store={readCol:async c=>Object.values(rd(c)),readOne:async(c,id)=>rd(c)[id]||null,writeDoc:async(c,id,d)=>{const o=rd(c);if(d===null)delete o[id];else o[id]=d;LSS(key(c),JSON.stringify(o))}};
  const sha=async s=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))).map(b=>b.toString(16).padStart(2,'0')).join('');
  const hp={hash:async pw=>{const salt=Math.random().toString(36).slice(2);return{salt,hash:await sha(salt+pw)}},check:async(pw,r)=>r&&(await sha(r.salt+pw))===r.hash,adminPw:'Demo#Albaha2026'};
- let sid=LSG('bs_sid')||null;
- API=async(act,b={})=>{if(act==='boot'&&!LSG('bs_seeded')&&sid){await seed(store,sid);LSS('bs_seeded','1')}
-  const r=await handle(store,hp,sid,act,b);if('session' in r){sid=r.session;LSS('bs_sid',sid||'')}if(r.status!==200)throw Object.assign(new Error(r.body.error),{code:r.status,j:r.body});return r.body}}
+ let sid=LSG('bs2_sid')||null;
+ API=async(act,b={})=>{if(act==='boot'&&!LSG('bs2_seeded')&&sid){await seed(store,sid);LSS('bs2_seeded','1')}
+  const r=await handle(store,hp,sid,act,b);if('session' in r){sid=r.session;LSS('bs2_sid',sid||'')}if(r.status!==200)throw Object.assign(new Error(r.body.error),{code:r.status,j:r.body});return r.body}}
 
-/* ---------- state ---------- */
-let D=null,PAGE=location.hash.slice(1)||'home',F={req:'all',q:''},POP=false;
+let D=null,PAGE=location.hash.slice(1)||'home',F={st:'all',q:''},POP=false;
 const me=()=>D.me,CAN=(m,p)=>can(D.me,m,p);
 const pname=id=>(D.people.find(p=>p.id===id)||{}).name||id||'—';
 const isLate=t=>t.due&&t.status!=='مكتملة'&&t.due<today();
-const RS={'جديد':'p-new','قيد الدراسة':'p-wait','معتمد':'p-ok','مرفوض':'p-bad'};
-const TS={'لم تبدأ':'p-gray','جارية':'p-wait','مكتملة':'p-ok'};
-function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
-const errMsg=e=>({forbidden:'ليست لديك صلاحية لهذا الإجراء',weak:'كلمة المرور يجب ألا تقل عن 10 أحرف',old:'كلمة المرور الحالية غير صحيحة',bad:'اسم المستخدم أو كلمة المرور غير صحيحة',too_many:'محاولات كثيرة، حاول لاحقاً',no_storage:'قاعدة البيانات غير مفعّلة على الخادم',pass:'كلمة المرور مطلوب إدخالها للمستخدم الجديد',id:'اسم المستخدم غير صالح'}[e.message]||'حدث خطأ، حاول مرة أخرى');
-
-async function load(){try{D=await API('boot');render()}catch(e){if(e.code===401){D=null;renderLogin()}else{renderLogin(errMsg(e))}}}
-
-/* ---------- login ---------- */
-function renderLogin(msg=''){
- $('#root').innerHTML=`<div class="login"><div class="side"><h1>منصة متابعة أعمال القسم</h1><p>كل ما يحتاجه القائد في شاشة واحدة: الطلبات بانتظار قرارك، المهام المتأخرة، ومؤشرات الأداء — مع تنبيهات فورية وصلاحيات يحددها المدير لكل مستخدم.</p>
- <ul><li><i>${ic('req',16)}</i>اعتماد الطلبات والمعاملات بضغطة</li><li><i>${ic('task',16)}</i>متابعة المهام والإنجاز والتأخير</li><li><i>${ic('kpi',16)}</i>مؤشرات أداء واضحة مقابل المستهدف</li><li><i>${ic('bell',16)}</i>إشعارات فورية لكل جديد</li><li><i>${ic('lock',16)}</i>صلاحيات دقيقة لكل مستخدم</li></ul></div>
- <form id="lf" autocomplete="on"><h2>تسجيل الدخول</h2><p>أدخل اسم المستخدم وكلمة المرور</p>
- <div class="f"><label>اسم المستخدم أو البريد</label><input class="in" name="user" id="lu" autocomplete="username" required dir="ltr"></div>
- <div class="f"><label>كلمة المرور</label><input class="in" type="password" name="pass" id="lp" autocomplete="current-password" required dir="ltr"></div>
- <div class="err" id="le">${esc(msg)}</div><button class="btn pri lg" type="submit">دخول</button>
- ${SRV?'':`<div class="demo-note">نسخة عرض تعمل داخل المتصفح. للدخول: <b dir="ltr">khaled</b> / <b dir="ltr">Demo#Albaha2026</b></div>`}
- <div class="small muted" style="text-align:center">إعداد وفكرة وتصميم: د. خالد البلوي — جميع الحقوق محفوظة</div></form></div>`;
- $('#lf').onsubmit=async ev=>{ev.preventDefault();$('#le').textContent='';const b=ev.submitter;b.disabled=true;try{const r=await API('login',{user:$('#lu').value,pass:$('#lp').value});await load();if(r.mustChange)pwModal(true)}catch(e){$('#le').textContent=errMsg(e)}b.disabled=false};
-}
-
-/* ---------- shell ---------- */
-function navItems(){const n=[['home','الرئيسية','home']];for(const m of D.mods)if(CAN(m.k,'v')||(m.k==='task'&&D.task?.length))n.push([m.k,m.n,m.k]);if(me().admin)n.push(['users','المستخدمون والصلاحيات','users']);return n}
-function pending(){return(D.req||[]).filter(r=>['جديد','قيد الدراسة'].includes(r.status))}
-function alerts(){const a=[];const late=(D.task||[]).filter(t=>isLate(t)&&(t.owner===me().id||CAN('task','e')));if(late.length)a.push({text:`${late.length} مهمة متأخرة عن موعدها`,mod:'task',sys:1});
- if(CAN('req','ap')){const old=pending().filter(r=>Date.now()-(r.at||0)>3*864e5);if(old.length)a.push({text:`${old.length} طلب ينتظر أكثر من 3 أيام`,mod:'req',sys:1})}
- const low=(D.kpi||[]).filter(kBad);if(low.length&&CAN('kpi','v'))a.push({text:`${low.length} مؤشر دون المستهدف`,mod:'kpi',sys:1});return a}
-const unread=()=>D.notif.filter(n=>!n.read).length+alerts().length;
-function render(){if(!navItems().some(n=>n[0]===PAGE))PAGE='home';
- const items=navItems(),cnt={req:CAN('req','ap')?pending().length:0,task:(D.task||[]).filter(t=>t.owner===me().id&&t.status!=='مكتملة').length};
- const title=(items.find(n=>n[0]===PAGE)||[,''])[1];
- $('#root').innerHTML=`<div class="app"><nav class="nav" id="nav"><div class="brand">منصة متابعة القسم<small>نموذج أولي للفكرة</small></div>
- ${items.map(([k,n,i])=>`<a class="${PAGE===k?'on':''}" data-go="${k}">${ic(i)}${n}${cnt[k]?`<span class="cnt">${cnt[k]}</span>`:''}</a>`).join('')}
- <div class="sep"></div><a data-act="pw">${ic('lock')}تغيير كلمة المرور</a><a data-act="logout">${ic('out')}تسجيل الخروج</a>
- <div class="foot">إعداد وفكرة وتصميم: د. خالد البلوي<br>جميع الحقوق محفوظة</div></nav>
- <div class="main"><div class="top"><button class="btn ghost menu-btn" data-act="menu">${ic('menu')}</button><h1>${esc(title)}</h1><div class="sp"></div>
- <button class="btn ghost bell" data-act="bell" title="الإشعارات">${ic('bell',20)}${unread()?`<span class="dot">${unread()}</span>`:''}</button>
- <div class="who" data-act="pw">${av(me().id,me().name)}<div><b>${esc(me().name)}</b><small>${esc(me().title||(me().admin?'مدير النظام':''))}</small></div></div></div>
- <div class="page" id="page">${(V[PAGE]||V.home)()}</div></div></div>${POP?bellPop():''}`;
-}
-function bellPop(){const al=alerts();return`<div class="pop" id="pop"><div class="hd"><b>الإشعارات</b>${D.notif.some(n=>!n.read)?`<button class="btn sm ghost" data-act="readAll">تعليم الكل كمقروء</button>`:''}</div><div class="bd">
- ${al.map(n=>`<div class="nt unread" data-go="${n.mod}"><span style="color:var(--warn)">${ic('alert',16)}</span><div><b>${esc(n.text)}</b><small>تنبيه تلقائي</small></div></div>`).join('')}
- ${D.notif.map(n=>`<div class="nt ${n.read?'':'unread'}" data-nt="${n.id}" data-go="${n.mod==='sys'?'home':n.mod}"><span class="dt"></span><div>${esc(n.text)}<small>${ago(n.at)}</small></div></div>`).join('')}
- ${!al.length&&!D.notif.length?'<div class="empty">لا توجد إشعارات</div>':''}</div></div>`}
-
-/* ---------- views ---------- */
+const SP={'عند رئيس القسم':'p-warn','عند العميد':'p-warn','معتمد':'p-ok','مرفوض':'p-bad','معاد للاستكمال':'p-blue'};
+const TS={'لم تبدأ':'p-gray','جارية':'p-warn','مكتملة':'p-ok'};
+const pending=()=>(D.req||[]).filter(r=>PENDING.includes(r.status));
 const kBad=k=>{const t=+k.target,a=+k.actual;return isFinite(t)&&isFinite(a)&&k.actual!==''&&(k.better==='low'?a>t:a<t)};
-const kPct=k=>{const t=+k.target,a=+k.actual;if(!t)return 0;return Math.max(0,Math.min(100,Math.round(k.better==='low'?(t/Math.max(a,0.0001))*100:(a/t)*100)))};
-const V={};
-V.home=()=>{const T=D.task||[],R=D.req||[],K=D.kpi||[];const late=T.filter(isLate),done=T.filter(t=>t.status==='مكتملة').length,rate=T.length?Math.round(done/T.length*100):0,bad=K.filter(kBad);
- const h=new Date().getHours();const tiles=[];
- if(CAN('req','v'))tiles.push(['req',CAN('req','ap')?'طلبات بانتظار قرارك':'طلبات قيد المعالجة',pending().length,'var(--priL)','var(--pri)','req']);
- tiles.push(['task','مهام متأخرة',late.length,late.length?'var(--badL)':'var(--okL)',late.length?'var(--bad)':'var(--ok)','clock']);
- tiles.push(['task','نسبة إنجاز المهام',rate+'%','var(--okL)','var(--ok)','check']);
- if(CAN('kpi','v'))tiles.push(['kpi','مؤشرات دون المستهدف',bad.length,bad.length?'var(--warnL)':'var(--okL)',bad.length?'var(--warn)':'var(--ok)','kpi']);
- const st=['لم تبدأ','جارية','مكتملة'].map(s=>T.filter(t=>t.status===s).length);const col=['#A9B3C6','#D69E2E','#1E8E5A'];
- const rs=['جديد','قيد الدراسة','معتمد','مرفوض'].map(s=>R.filter(r=>r.status===s).length);const rcol=['#2E6BC0','#D69E2E','#1E8E5A','#C0392B'];
- const stack=(a,c,l)=>{const s=a.reduce((x,y)=>x+y,0)||1;return`<div class="stack">${a.map((v,i)=>v?`<i style="width:${v/s*100}%;background:${c[i]}" title="${l[i]}: ${v}"></i>`:'').join('')}</div><div class="legend mt" style="margin-top:10px">${a.map((v,i)=>`<span><i style="background:${c[i]}"></i>${l[i]}: <b>${v}</b></span>`).join('')}</div>`};
- return`<div class="hello"><div><h2>${h<12?'صباح الخير':'مساء الخير'}، ${esc(me().name.split(' ').slice(0,2).join(' '))}</h2><p>هذه خلاصة اليوم — ${new Date().toLocaleDateString('ar-SA-u-ca-gregory-nu-latn',{weekday:'long',day:'numeric',month:'long'})}</p></div></div>
- <div class="grid g4">${tiles.map(([go,l,n,bg,fg,i])=>`<div class="card tile" data-go="${go}"><div class="ti" style="background:${bg};color:${fg}">${ic(i,22)}</div><div><div class="n">${n}</div><div class="l">${l}</div></div></div>`).join('')}</div>
- <div class="grid g21" style="margin-top:16px"><div class="card"><h3>${ic('alert')}يحتاج انتباهك<span class="sp"></span></h3><div class="list">
- ${[...(CAN('req','ap')?pending().slice(0,5).map(r=>`<div class="li" data-open="req:${r.id}"><span class="pill ${RS[r.status]}">${r.status}</span><div class="t"><b>${esc(r.title)}</b><small>${esc(r.applicant||pname(r.by))} · ${esc(r.type||'')}</small></div><span class="small muted">${fmtD(r.due)}</span></div>`):[]),
-   ...late.slice(0,5).map(t=>`<div class="li" data-open="task:${t.id}"><span class="pill p-bad">متأخرة</span><div class="t"><b>${esc(t.title)}</b><small>${esc(pname(t.owner))} · الموعد ${fmtD(t.due)}</small></div><span class="small muted">${t.progress||0}%</span></div>`)].join('')||'<div class="empty">لا شيء عاجل — كل شيء تحت السيطرة ✓</div>'}</div></div>
- <div class="card"><h3>${ic('task')}حالة المهام</h3>${stack(st,col,['لم تبدأ','جارية','مكتملة'])}${CAN('req','v')?`<h3 style="margin-top:22px">${ic('req')}حالة الطلبات</h3>${stack(rs,rcol,['جديد','قيد الدراسة','معتمد','مرفوض'])}`:''}</div></div>
- <div class="grid g2" style="margin-top:16px">${CAN('kpi','v')?`<div class="card"><h3>${ic('kpi')}مؤشرات الأداء<span class="sp"></span><a class="small" data-go="kpi">عرض الكل</a></h3>${K.slice(0,5).map(k=>`<div style="margin:10px 0"><div class="row" style="justify-content:space-between"><span>${esc(k.name)}</span><b style="color:${kBad(k)?'var(--bad)':'var(--ok)'}">${esc(k.actual)}${esc(k.unit==='%'?'%':' '+k.unit)} <span class="muted small">/ ${esc(k.target)}</span></b></div><div class="bar"><i style="width:${kPct(k)}%;background:${kBad(k)?'#D69E2E':'#1E8E5A'}"></i></div></div>`).join('')||'<div class="empty">لا توجد مؤشرات</div>'}</div>`:''}
- ${CAN('dec','v')?`<div class="card"><h3>${ic('dec')}أحدث القرارات والتعاميم<span class="sp"></span><a class="small" data-go="dec">عرض الكل</a></h3><div class="list">${(D.dec||[]).sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,4).map(d=>`<div class="li" data-open="dec:${d.id}"><div class="t"><b>${esc(d.title)}</b><small>رقم ${esc(d.no||'—')} · ${fmtD(d.date)}</small></div>${decPill(d)}</div>`).join('')||'<div class="empty">لا توجد قرارات</div>'}</div></div>`:''}</div>`};
-const decPill=d=>d.until&&d.until<today()?'<span class="pill p-gray">منتهي</span>':'<span class="pill p-ok">ساري</span>';
-const addBtn=(m,t)=>CAN(m,'a')?`<button class="btn pri" data-new="${m}">${ic('plus',16)}${t}</button>`:'';
-V.req=()=>{const S=['all','جديد','قيد الدراسة','معتمد','مرفوض'];let R=(D.req||[]).slice().sort((a,b)=>(b.at||0)-(a.at||0));if(F.req!=='all')R=R.filter(r=>r.status===F.req);if(F.q)R=R.filter(r=>(r.title+r.applicant+r.type).includes(F.q));
- return`<div class="tools"><div class="chips">${S.map(s=>`<button class="chip ${F.req===s?'on':''}" data-freq="${s}">${s==='all'?'الكل':s} <span class="muted">${s==='all'?(D.req||[]).length:(D.req||[]).filter(r=>r.status===s).length}</span></button>`).join('')}</div><input class="in search" id="q" placeholder="بحث…" value="${esc(F.q)}"><div style="flex:1"></div>${addBtn('req','طلب جديد')}</div>
- <div class="card tbl">${R.length?`<table><tr><th>الطلب</th><th>النوع</th><th>مقدم الطلب</th><th>الأولوية</th><th>الموعد</th><th>الحالة</th></tr>${R.map(r=>`<tr class="click" data-open="req:${r.id}"><td><b>${esc(r.title)}</b></td><td>${esc(r.type||'—')}</td><td>${esc(r.applicant||pname(r.by))}</td><td>${esc(r.priority||'—')}</td><td>${fmtD(r.due)}</td><td><span class="pill ${RS[r.status]||'p-gray'}">${esc(r.status)}</span></td></tr>`).join('')}</table>`:'<div class="empty">لا توجد طلبات</div>'}</div>`};
-V.task=()=>{const T=D.task||[];const cols=['لم تبدأ','جارية','مكتملة'];
- return`<div class="tools"><input class="in search" id="q" placeholder="بحث في المهام…" value="${esc(F.q)}"><div style="flex:1"></div>${addBtn('task','مهمة جديدة')}</div><div class="kan">${cols.map(c=>{const L=T.filter(t=>t.status===c&&(!F.q||t.title.includes(F.q)));return`<div class="col"><h4><span class="pill ${TS[c]}">${c}</span><span class="muted">${L.length}</span></h4>
- ${L.map(t=>`<div class="kc ${isLate(t)?'late':''}" data-open="task:${t.id}"><b>${esc(t.title)}</b><div class="bar" style="margin-bottom:8px"><i style="width:${+t.progress||0}%"></i></div><div class="row"><span class="row" style="gap:6px">${av(t.owner,pname(t.owner))}<span class="small">${esc(pname(t.owner))}</span></span><span class="small ${isLate(t)?'':'muted'}" style="${isLate(t)?'color:var(--bad);font-weight:700':''}">${fmtD(t.due)}</span></div></div>`).join('')||'<div class="empty small">—</div>'}</div>`}).join('')}</div>`};
-V.dec=()=>{const L=(D.dec||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));return`<div class="tools"><input class="in search" id="q" placeholder="بحث…" value="${esc(F.q)}"><div style="flex:1"></div>${addBtn('dec','قرار / تعميم')}</div>
- <div class="grid g3">${L.filter(d=>!F.q||d.title.includes(F.q)).map(d=>`<div class="card" data-open="dec:${d.id}" style="cursor:pointer"><div class="row" style="justify-content:space-between;margin-bottom:8px">${decPill(d)}<span class="small muted">رقم ${esc(d.no||'—')}</span></div><b style="font-size:15px">${esc(d.title)}</b><p class="small muted" style="margin:8px 0">${esc((d.body||'').slice(0,110))}</p><div class="small muted">${fmtD(d.date)} ← ${d.until?fmtD(d.until):'مفتوح'}</div></div>`).join('')||'<div class="empty">لا توجد قرارات</div>'}</div>`};
-V.kpi=()=>{const K=D.kpi||[];return`<div class="tools"><span class="legend"><span><i style="background:#1E8E5A"></i>محقق</span><span><i style="background:#D69E2E"></i>دون المستهدف</span></span><div style="flex:1"></div>${addBtn('kpi','مؤشر جديد')}</div>
- <div class="grid g3">${K.map(k=>`<div class="card kpi" data-open="kpi:${k.id}" style="cursor:pointer"><div class="row" style="justify-content:space-between"><span class="small muted">${esc(k.period||'')}</span><span class="pill ${kBad(k)?'p-wait':'p-ok'}">${kBad(k)?'دون المستهدف':'محقق'}</span></div><div style="margin:10px 0 4px;font-weight:600">${esc(k.name)}</div><div class="row" style="align-items:baseline"><span class="big">${esc(k.actual)}</span><span>${esc(k.unit)}</span><span class="tg">المستهدف ${esc(k.target)} ${k.better==='low'?'(الأقل أفضل)':''}</span></div><div class="bar" style="margin-top:10px"><i style="width:${kPct(k)}%;background:${kBad(k)?'#D69E2E':'#1E8E5A'}"></i></div></div>`).join('')||'<div class="empty">لا توجد مؤشرات</div>'}</div>`};
-V.rep=()=>{const T=D.task||[],R=D.req||[],K=D.kpi||[];const done=T.filter(t=>t.status==='مكتملة').length,late=T.filter(isLate);const ap=R.filter(r=>r.status==='معتمد').length,rj=R.filter(r=>r.status==='مرفوض').length;
- const byOwner={};T.forEach(t=>{const o=byOwner[t.owner]||(byOwner[t.owner]={n:0,d:0,l:0});o.n++;if(t.status==='مكتملة')o.d++;if(isLate(t))o.l++});
- return`<div class="tools noprint"><span class="muted">تقرير تلقائي محدث لحظياً — ${new Date().toLocaleDateString('ar-SA-u-ca-gregory-nu-latn')}</span><div style="flex:1"></div><button class="btn" onclick="print()">${ic('print',16)}طباعة / PDF</button></div>
- <div class="grid g4">${[['إجمالي الطلبات',R.length],['معتمدة',ap],['مرفوضة',rj],['قيد الإجراء',pending().length],['إجمالي المهام',T.length],['مكتملة',done],['متأخرة',late.length],['نسبة الإنجاز',(T.length?Math.round(done/T.length*100):0)+'%']].map(([l,n])=>`<div class="card"><div class="muted small">${l}</div><div style="font-size:24px;font-weight:700">${n}</div></div>`).join('')}</div>
- <div class="grid g2" style="margin-top:16px"><div class="card"><h3>الإنجاز حسب المسؤول</h3><table><tr><th>المسؤول</th><th>المهام</th><th>مكتملة</th><th>متأخرة</th><th style="width:30%">الإنجاز</th></tr>${Object.entries(byOwner).map(([o,v])=>`<tr><td>${esc(pname(o))}</td><td>${v.n}</td><td>${v.d}</td><td style="${v.l?'color:var(--bad);font-weight:700':''}">${v.l}</td><td><div class="bar"><i style="width:${Math.round(v.d/v.n*100)}%"></i></div></td></tr>`).join('')}</table></div>
- <div class="card"><h3>مؤشرات الأداء</h3><table><tr><th>المؤشر</th><th>المستهدف</th><th>الفعلي</th><th>الحالة</th></tr>${K.map(k=>`<tr><td>${esc(k.name)}</td><td>${esc(k.target)}</td><td>${esc(k.actual)}</td><td><span class="pill ${kBad(k)?'p-wait':'p-ok'}">${kBad(k)?'يحتاج تحسين':'محقق'}</span></td></tr>`).join('')}</table></div></div>
- <div class="card" style="margin-top:16px"><h3>فرص التحسين المقترحة</h3><ul style="margin:0;padding-inline-start:20px;line-height:2">${improve().map(x=>`<li>${x}</li>`).join('')}</ul></div>
- ${D.log?`<div class="card noprint" style="margin-top:16px"><h3>سجل النشاط</h3><div class="list">${D.log.slice(0,12).map(l=>`<div class="li" style="cursor:default">${av(l.by,pname(l.by))}<div class="t"><b>${esc(pname(l.by))} — ${({add:'أضاف',edit:'عدّل',del:'حذف',login:'دخل النظام'})[l.act]||l.act} ${esc(l.act==='login'?'':l.title||'')}</b><small>${ago(l.at)}</small></div></div>`).join('')}</div></div>`:''}`};
-function improve(){const out=[],T=D.task||[],K=D.kpi||[];const late=T.filter(isLate);if(late.length)out.push(`معالجة <b>${late.length}</b> مهمة متأخرة: إعادة جدولة أو إعادة توزيع على من لديه سعة.`);
- const old=pending().filter(r=>Date.now()-(r.at||0)>3*864e5);if(old.length)out.push(`<b>${old.length}</b> طلب ينتظر أكثر من 3 أيام — يُقترح تحديد مدة قصوى للرد على كل نوع طلب.`);
- K.filter(kBad).forEach(k=>out.push(`مؤشر «${esc(k.name)}» عند ${esc(k.actual)} مقابل ${esc(k.target)}: وضع خطة تحسين بمسؤول وموعد.`));
- const cnt={};T.filter(t=>t.status!=='مكتملة').forEach(t=>cnt[t.owner]=(cnt[t.owner]||0)+1);const mx=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];if(mx&&mx[1]>=4)out.push(`تركّز المهام المفتوحة لدى ${esc(pname(mx[0]))} (${mx[1]} مهام) — يُنصح بتوزيع الحمل.`);
- return out.length?out:['لا توجد ملاحظات حالياً — الأداء ضمن المستهدف.']}
-V.users=()=>{const U=D.users||[];return`<div class="tools"><span class="muted">حدّد لكل مستخدم ما يراه وما يستطيع فعله. التغيير يُطبّق فوراً ويصل المستخدم إشعار.</span><div style="flex:1"></div><button class="btn pri" data-act="userNew">${ic('plus',16)}مستخدم جديد</button></div>
- <div class="card tbl"><table><tr><th>المستخدم</th><th>اسم الدخول</th><th>الصفة</th><th>الصلاحيات</th><th>الحالة</th></tr>${U.map(u=>`<tr class="click" data-user="${u.id}"><td><span class="row">${av(u.id,u.name)}<b>${esc(u.name)}</b></span></td><td dir="ltr" style="text-align:end">${esc(u.id)}</td><td>${esc(u.title||'—')}</td><td>${u.admin?'<span class="pill p-new">مدير النظام</span>':`<span class="small">${D.mods.filter(m=>u.perms?.[m.k]?.v).map(m=>m.n.split(' ')[0]).join('، ')||'—'}</span>`}</td><td>${u.active?'<span class="pill p-ok">مفعّل</span>':'<span class="pill p-gray">موقوف</span>'}</td></tr>`).join('')}</table></div>
- <div class="card" style="margin-top:16px"><h3>بيانات العرض</h3><p class="muted small" style="margin-top:0">لعرض الفكرة على الإدارة يمكن تحميل بيانات تجريبية ثم مسحها قبل التشغيل الفعلي.</p><div class="row"><button class="btn" data-act="seed">تحميل بيانات تجريبية</button><button class="btn bad" data-act="wipe">مسح بيانات العرض</button></div></div>`};
+const kPct=k=>{const t=+k.target,a=+k.actual;if(!t)return 0;return Math.max(0,Math.min(100,Math.round(k.better==='low'?(t/Math.max(a,.0001))*100:(a/t)*100)))};
+function toast(t,bad){const e=document.createElement('div');e.className='toast';if(bad){e.style.background='var(--bad)';e.style.color='#fff'}e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2800)}
+const errMsg=e=>({forbidden:'ليست لديك صلاحية لهذا الإجراء',weak:'كلمة المرور يجب ألا تقل عن 10 أحرف',old:'كلمة المرور الحالية غير صحيحة',bad:'اسم المستخدم أو كلمة المرور غير صحيحة',too_many:'محاولات كثيرة، حاول بعد قليل',no_storage:'قاعدة البيانات غير مفعّلة على الخادم',pass:'اكتب كلمة مرور للمستخدم الجديد',id:'اسم الدخول غير صالح'}[e.message]||'حدث خطأ، حاول مرة أخرى');
+async function load(){try{D=await API('boot');render()}catch(e){D=null;renderLogin(e.code===401?'':errMsg(e))}}
+const credit='إعداد وفكرة وتصميم: د. خالد البلوي — جميع الحقوق محفوظة © 2026';
 
-/* ---------- modals ---------- */
-function modal(t,body,foot,wide){closeM();const o=document.createElement('div');o.className='ov';o.id='ov';o.innerHTML=`<div class="md ${wide?'wide':''}"><div class="hd"><h3>${t}</h3><button class="btn ghost sm" data-act="close">${ic('x',16)}</button></div><div class="bd">${body}</div>${foot?`<div class="ft">${foot}</div>`:''}</div>`;o.addEventListener('mousedown',e=>{if(e.target===o)closeM()});document.body.appendChild(o);const f=o.querySelector('input,textarea,select');f&&f.focus()}
+function renderLogin(msg=''){
+ $('#root').innerHTML=`<div class="lgn"><header class="hdr"><div class="ttl"><b>نظام متابعة أعمال القسم</b><small>بوابة القيادة</small></div><div class="sp"></div>${themeBtns()}</header>
+ <div class="box"><div class="panel"><div class="intro"><h2>كل ما يحتاج قرارك<br>في شاشة واحدة</h2><p>تابع الطلبات وخط سيرها، والمهام ونسبة إنجازها، ومؤشرات الأداء — واعتمد بضغطة واحدة من المكتب أو الجوال.</p>
+ <div class="feat"><span>${ic('flow')}خط سير الطلبات</span><span>${ic('check')}اعتماد بضغطة</span><span>${ic('task')}متابعة المهام</span><span>${ic('kpi')}مؤشرات الأداء</span><span>${ic('bell')}تنبيهات فورية</span><span>${ic('lock')}صلاحيات لكل مستخدم</span></div></div>
+ <form id="lf"><h2>تسجيل الدخول</h2><p class="muted" style="margin:0">أدخل اسم المستخدم وكلمة المرور</p>
+ <div class="f"><label>اسم المستخدم</label><input class="in" id="lu" autocomplete="username" dir="ltr" required></div>
+ <div class="f"><label>كلمة المرور</label><input class="in" type="password" id="lp" autocomplete="current-password" dir="ltr" required></div>
+ <div class="err" id="le">${esc(msg)}</div><button class="btn pri lg" type="submit">دخول</button>
+ ${SRV?'':`<div class="demo">نسخة عرض: <b dir="ltr">khaled</b> / <b dir="ltr">Demo#Albaha2026</b></div>`}</form></div></div>
+ <div class="foot"><b>${credit}</b><span></span></div></div>`;
+ $('#lf').onsubmit=async ev=>{ev.preventDefault();$('#le').textContent='';const b=ev.submitter;b.disabled=true;try{const r=await API('login',{user:$('#lu').value,pass:$('#lp').value});await load();if(r.mustChange)pwModal(true)}catch(e){$('#le').textContent=errMsg(e)}b.disabled=false};}
+const themeBtns=()=>`<button class="hb" data-act="big" title="تكبير الخط">${ic('font')}<span class="lbl">${document.documentElement.classList.contains('big')?'خط عادي':'تكبير الخط'}</span></button><button class="hb" data-act="theme" title="الوضع الفاتح / الداكن">${ic(document.documentElement.dataset.theme==='light'?'moon':'sun')}</button>`;
+
+function nav(){const n=[['home','الرئيسية','home']];if(CAN('req','v')||CAN('req','a'))n.push(['req','الطلبات وخط السير','flow']);if(CAN('task','v')||(D.task||[]).length)n.push(['task','المتابعة والمهام','task']);if(CAN('kpi','v'))n.push(['kpi','مؤشرات الأداء','kpi']);if(CAN('rep','v'))n.push(['rep','التقارير','rep']);if(me().admin)n.push(['users','المستخدمون والصلاحيات','users']);return n}
+function alerts(){const a=[];const late=(D.task||[]).filter(t=>isLate(t)&&(t.owner===me().id||CAN('task','e')));if(late.length)a.push({text:`${late.length} مهمة متأخرة عن موعدها`,mod:'task'});
+ if(CAN('req','ap')){const old=pending().filter(r=>Date.now()-(r.at||0)>3*864e5);if(old.length)a.push({text:`${old.length} طلب ينتظر منذ أكثر من 3 أيام`,mod:'req'})}
+ const low=(D.kpi||[]).filter(kBad);if(low.length&&CAN('kpi','v'))a.push({text:`${low.length} مؤشر دون المستهدف`,mod:'kpi'});return a}
+const unread=()=>D.notif.filter(n=>!n.read).length+alerts().length;
+function render(){const items=nav();if(!items.some(n=>n[0]===PAGE))PAGE='home';const cnt={req:CAN('req','ap')?pending().length:0,task:(D.task||[]).filter(t=>t.owner===me().id&&t.status!=='مكتملة').length};
+ $('#root').innerHTML=`<header class="hdr"><div class="ttl"><b>نظام متابعة أعمال القسم</b><small>${esc(me().title||'')}</small></div><div class="sp"></div>
+ ${themeBtns()}<button class="hb" data-act="bell" title="التنبيهات">${ic('bell')}<span class="lbl">التنبيهات</span>${unread()?`<span class="dot">${unread()}</span>`:''}</button>
+ <div class="me" data-act="menu">${av(me().id,me().name)}<div><b>${esc(me().name)}</b><small>${esc(me().admin?'مدير النظام':me().title||'')}</small></div></div></header>
+ <div class="wrap"><nav class="side">${items.map(([k,n,i])=>`<a class="${PAGE===k?'on':''}" data-go="${k}">${ic(i)}${n}${cnt[k]?`<span class="cnt">${cnt[k]}</span>`:''}</a>`).join('')}
+ <div class="sep"></div><a data-act="pw">${ic('lock')}كلمة المرور</a><a data-act="logout">${ic('out')}خروج</a></nav>
+ <main class="main" id="page">${(V[PAGE]||V.home)()}</main></div>
+ <div class="foot"><b>${credit}</b><span>${new Date().toLocaleDateString(LOC,{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</span></div>
+ <nav class="tabbar">${items.slice(0,5).map(([k,n,i])=>`<a class="${PAGE===k?'on':''}" data-go="${k}">${ic(i)}${n.split(' ')[0]}${cnt[k]?`<span class="cnt">${cnt[k]}</span>`:''}</a>`).join('')}</nav>${POP?bellPop():''}`}
+function bellPop(){const al=alerts();return`<div class="pop" id="pop"><div class="hd"><b>التنبيهات</b>${D.notif.some(n=>!n.read)?`<button class="btn sm ghost" data-act="readAll">تعليم الكل كمقروء</button>`:''}</div><div class="bd">
+ ${al.map(n=>`<div class="nt unread" data-go="${n.mod}"><span style="color:var(--warn)">${ic('alert')}</span><div><b>${esc(n.text)}</b><small>تنبيه تلقائي</small></div></div>`).join('')}
+ ${D.notif.map(n=>`<div class="nt ${n.read?'':'unread'}" data-nt="${n.id}" data-go="${n.mod==='sys'?'home':n.mod}"><span style="color:var(--pri)">${ic('bell')}</span><div>${esc(n.text)}<small>${ago(n.at)}</small></div></div>`).join('')}
+ ${!al.length&&!D.notif.length?'<div class="empty">لا توجد تنبيهات</div>':''}</div></div>`}
+
+function steps(r){const st=r.status;const idx=FLOW.indexOf(st);const rej=st==='مرفوض',ret=st==='معاد للاستكمال';
+ const reached=Math.max(1,...(r.hist||[]).map(h=>FLOW.indexOf(h.s)));
+ return`<div class="steps">${FLOW.map((s,i)=>{let c='';if(rej||ret){if(i<reached)c='done';else if(i===reached)c='bad'}else if(i<idx||st==='معتمد')c='done';else if(i===idx)c='cur';
+  const lab=(rej||ret)&&i===reached?(rej?'مرفوض':'معاد للاستكمال'):s;return`<div class="st ${c}"><i>${c==='done'?'✓':c==='bad'?(rej?'✕':'↩'):i+1}</i>${lab}</div>`}).join('')}</div>`}
+function decisionBtns(r,wrap=true){if(!CAN('req','ap')||!PENDING.includes(r.status))return'';const fin=r.status==='عند العميد';
+ const b=`<button class="btn ok lg" data-st="${fin?'معتمد':'عند العميد'}" data-rid="${r.id}">${ic('check')}${fin?'اعتماد نهائي':'اعتماد وإحالة للعميد'}</button><button class="btn warn" data-st="معاد للاستكمال" data-rid="${r.id}">${ic('back')}إعادة للاستكمال</button><button class="btn bad" data-st="مرفوض" data-rid="${r.id}">${ic('x')}رفض</button>`;return wrap?`<div class="acts">${b}</div>`:b}
+function pipeline(){const R=D.req||[];const c=s=>R.filter(r=>r.status===s).length;const S=[['عند رئيس القسم','cur'],['عند العميد','cur'],['معتمد','done']];
+ return`<div class="pipe">${S.map(([s,k],i)=>`${i?`<div class="arr">${ic('left')}</div>`:''}<div class="stg ${c(s)?k:''}" data-flt="${s}"><div class="n">${c(s)}</div><div class="l">${s}</div></div>`).join('')}</div>
+ <div class="side-st"><div class="stg" data-flt="معاد للاستكمال"><div class="n">${c('معاد للاستكمال')}</div><div class="l small">معاد للاستكمال</div></div><div class="stg" data-flt="مرفوض"><div class="n">${c('مرفوض')}</div><div class="l small">مرفوض</div></div></div>`}
+
+const V={};
+V.home=()=>{const T=D.task||[],K=D.kpi||[],R=D.req||[];const late=T.filter(isLate),done=T.filter(t=>t.status==='مكتملة').length,rate=T.length?Math.round(done/T.length*100):0;const h=new Date().getHours();
+ const ap=CAN('req','ap');const mine=ap?pending():R.filter(r=>r.by===me().id&&r.status!=='معتمد');
+ const tiles=[];if(ap)tiles.push(['req','ينتظر قرارك',pending().length,'var(--warnL)','var(--warn)','alert','pend']);else tiles.push(['req','طلباتي الجارية',mine.length,'var(--priL)','var(--pri)','req','']);
+ tiles.push(['req','طلبات معتمدة',R.filter(r=>r.status==='معتمد').length,'var(--okL)','var(--ok)','check','معتمد']);
+ tiles.push(['task','مهام متأخرة',late.length,late.length?'var(--badL)':'var(--okL)',late.length?'var(--bad)':'var(--ok)','clock','']);
+ tiles.push(['task','نسبة إنجاز المهام',rate+'%','var(--priL)','var(--pri)','task','']);
+ return`<div class="hello">${av(me().id,me().name)}<div><h1>${h<12?'صباح الخير':'مساء الخير'}، ${esc(me().name.split(' ').slice(0,2).join(' '))}</h1><p>${ap?(pending().length?`لديك <b>${pending().length}</b> طلبات بانتظار قرارك`:'لا توجد طلبات بانتظار قرارك — كل شيء منجز ✓'):'هذه خلاصة أعمالك اليوم'}</p></div></div>
+ <div class="grid g4">${tiles.map(([go,l,n,bg,fg,i,f])=>`<div class="card tile" data-go="${go}" ${f?`data-f="${f}"`:''}><div class="ti" style="background:${bg};color:${fg}">${ic(i)}</div><div><div class="n">${n}</div><div class="l">${l}</div></div></div>`).join('')}</div>
+ <div class="grid g21" style="margin-top:20px"><div class="card"><h3>${ic(ap?'alert':'req')}${ap?'ينتظر قرارك الآن':'طلباتي'}<span class="sp"></span>${CAN('req','a')?`<button class="btn sm pri" data-new="req">${ic('plus')}طلب جديد</button>`:''}</h3>
+ ${mine.slice(0,4).map(r=>`<div class="dc"><div class="t"><b data-open="${r.id}">${esc(r.title)}</b><span class="pill ${SP[r.status]}">${esc(r.status)}</span></div><div class="small muted">${esc(r.applicant||pname(r.by))} · ${esc(r.type||'')} · مطلوب قبل ${fmtD(r.due)}</div>${steps(r)}${decisionBtns(r)}</div>`).join('')||'<div class="empty">لا شيء ينتظر — ممتاز ✓</div>'}
+ ${mine.length>4?`<button class="btn" data-go="req" data-f="pend" style="width:100%">عرض الكل (${mine.length})</button>`:''}</div>
+ <div style="display:flex;flex-direction:column;gap:20px">${CAN('req','v')?`<div class="card"><h3>${ic('flow')}خط سير الطلبات</h3>${pipeline()}</div>`:''}
+ <div class="card"><h3>${ic('task')}المتابعة<span class="sp"></span><button class="btn sm ghost" data-go="task">الكل</button></h3>${(late.length?late:T.filter(t=>t.status!=='مكتملة')).slice(0,4).map(t=>`<div style="margin:12px 0;cursor:pointer" data-task="${t.id}"><div class="row" style="justify-content:space-between"><b>${esc(t.title)}</b>${isLate(t)?'<span class="pill p-bad">متأخرة</span>':`<span class="small muted">${fmtD(t.due)}</span>`}</div><div class="small muted" style="margin:2px 0 6px">${esc(pname(t.owner))} · ${+t.progress||0}%</div><div class="bar"><i style="width:${+t.progress||0}%;background:${isLate(t)?'var(--bad)':'var(--pri)'}"></i></div></div>`).join('')||'<div class="empty">لا مهام مفتوحة</div>'}</div></div></div>
+ ${CAN('kpi','v')&&K.length?`<div class="card" style="margin-top:20px"><h3>${ic('kpi')}مؤشرات الأداء<span class="sp"></span><button class="btn sm ghost" data-go="kpi">الكل</button></h3><div class="grid g3">${K.slice(0,6).map(k=>`<div><div class="row" style="justify-content:space-between"><span>${esc(k.name)}</span><b style="color:${kBad(k)?'var(--warn)':'var(--ok)'}">${esc(k.actual)}${k.unit==='%'?'%':' '+esc(k.unit)}</b></div><div class="bar" style="margin-top:6px"><i style="width:${kPct(k)}%;background:${kBad(k)?'var(--warn)':'var(--ok)'}"></i></div><div class="small muted">المستهدف ${esc(k.target)} — ${kBad(k)?'يحتاج تحسين':'محقق'}</div></div>`).join('')}</div></div>`:''}`};
+V.req=()=>{let R=(D.req||[]).slice().sort((a,b)=>(b.at||0)-(a.at||0));const S=[['all','الكل'],['pend','بانتظار القرار'],['معتمد','معتمد'],['معاد للاستكمال','معاد للاستكمال'],['مرفوض','مرفوض']];
+ if(F.st==='pend')R=R.filter(r=>PENDING.includes(r.status));else if(F.st!=='all')R=R.filter(r=>r.status===F.st);if(F.q)R=R.filter(r=>(r.title+r.applicant+r.type).includes(F.q));
+ return`<h1 class="pg">الطلبات وخط السير</h1><p class="sub">كل طلب يمر بمراحل واضحة: تقديم ← رئيس القسم ← العميد ← معتمد</p>
+ <div class="tools"><div class="chips">${S.map(([k,n])=>`<button class="chip ${F.st===k?'on':''}" data-flt="${k}">${n}</button>`).join('')}${PENDING.includes(F.st)?`<button class="chip on">${F.st}</button>`:''}</div><input class="in search" id="q" placeholder="ابحث عن طلب…" value="${esc(F.q)}"><div style="flex:1"></div>${CAN('req','a')?`<button class="btn pri" data-new="req">${ic('plus')}طلب جديد</button>`:''}</div>
+ ${R.map(r=>`<div class="rq" data-open="${r.id}"><div class="t"><b>${esc(r.title)}</b><span class="pill ${SP[r.status]}">${esc(r.status)}</span></div><div class="small muted">${esc(r.applicant||pname(r.by))} · ${esc(r.type||'')} · أولوية ${esc(r.priority||'—')} · مطلوب قبل ${fmtD(r.due)}</div>${steps(r)}</div>`).join('')||'<div class="card empty">لا توجد طلبات هنا</div>'}`};
+V.task=()=>{const T=D.task||[];const cols=['لم تبدأ','جارية','مكتملة'];
+ return`<h1 class="pg">المتابعة والمهام</h1><p class="sub">كل مهمة لها مسؤول وموعد ونسبة إنجاز — المتأخر يظهر بالأحمر</p>
+ <div class="tools"><input class="in search" id="q" placeholder="ابحث في المهام…" value="${esc(F.q)}"><div style="flex:1"></div>${CAN('task','a')?`<button class="btn pri" data-new="task">${ic('plus')}مهمة جديدة</button>`:''}</div>
+ <div class="kan">${cols.map(c=>{const L=T.filter(t=>t.status===c&&(!F.q||t.title.includes(F.q)));return`<div class="col"><h4><span class="pill ${TS[c]}">${c}</span><span class="muted">${L.length}</span></h4>
+ ${L.map(t=>`<div class="kc ${isLate(t)?'late':c==='مكتملة'?'done':''}" data-task="${t.id}"><b>${esc(t.title)}</b><div class="bar" style="margin-bottom:10px"><i style="width:${+t.progress||0}%;background:${isLate(t)?'var(--bad)':c==='مكتملة'?'var(--ok)':'var(--pri)'}"></i></div><div class="row" style="justify-content:space-between"><span class="row" style="gap:8px">${av(t.owner,pname(t.owner))}<span class="small">${esc(pname(t.owner))}</span></span><span class="small" style="${isLate(t)?'color:var(--bad);font-weight:700':'color:var(--mu)'}">${isLate(t)?'متأخرة · ':''}${fmtD(t.due)}</span></div></div>`).join('')||'<div class="empty small">—</div>'}</div>`}).join('')}</div>`};
+V.kpi=()=>{const K=D.kpi||[];return`<h1 class="pg">مؤشرات الأداء</h1><p class="sub">المستهدف مقابل الفعلي — الأخضر محقق، والبرتقالي يحتاج تحسين</p><div class="tools"><div style="flex:1"></div>${CAN('kpi','a')?`<button class="btn pri" data-new="kpi">${ic('plus')}مؤشر جديد</button>`:''}</div>
+ <div class="grid g3">${K.map(k=>`<div class="card" data-kpi="${k.id}" style="cursor:pointer"><div class="row" style="justify-content:space-between"><span class="small muted">${esc(k.period||'')}</span><span class="pill ${kBad(k)?'p-warn':'p-ok'}">${kBad(k)?'يحتاج تحسين':'محقق'}</span></div><div style="margin:12px 0 6px;font-weight:700;font-size:1.05em">${esc(k.name)}</div><div class="row" style="align-items:baseline"><span style="font-size:2.3em;font-weight:700;color:${kBad(k)?'var(--warn)':'var(--ok)'}">${esc(k.actual)}</span><span>${esc(k.unit)}</span><span class="muted small">المستهدف ${esc(k.target)}${k.better==='low'?' (الأقل أفضل)':''}</span></div><div class="bar" style="margin-top:12px"><i style="width:${kPct(k)}%;background:${kBad(k)?'var(--warn)':'var(--ok)'}"></i></div></div>`).join('')||'<div class="card empty">لا توجد مؤشرات</div>'}</div>`};
+V.rep=()=>{const T=D.task||[],R=D.req||[];const done=T.filter(t=>t.status==='مكتملة').length,late=T.filter(isLate);const by={};T.forEach(t=>{const o=by[t.owner]||(by[t.owner]={n:0,d:0,l:0});o.n++;if(t.status==='مكتملة')o.d++;if(isLate(t))o.l++});
+ const dur=R.filter(r=>r.status==='معتمد'&&r.hist?.length>1).map(r=>(r.hist[r.hist.length-1].at-r.hist[0].at)/864e5);const avg=dur.length?(dur.reduce((a,b)=>a+b,0)/dur.length).toFixed(1):'—';
+ return`<div class="row noprint" style="margin-bottom:8px"><h1 class="pg" style="flex:1">التقرير</h1><button class="btn" onclick="print()">${ic('print')}طباعة / PDF</button></div><p class="sub">يتحدث تلقائياً — ${new Date().toLocaleDateString(LOC,{day:'numeric',month:'long',year:'numeric'})}</p>
+ <div class="grid g4">${[['إجمالي الطلبات',R.length],['معتمدة',R.filter(r=>r.status==='معتمد').length],['بانتظار القرار',pending().length],['متوسط أيام الاعتماد',avg],['إجمالي المهام',T.length],['مكتملة',done],['متأخرة',late.length],['نسبة الإنجاز',(T.length?Math.round(done/T.length*100):0)+'%']].map(([l,n])=>`<div class="card"><div class="muted small">${l}</div><div style="font-size:1.9em;font-weight:700">${n}</div></div>`).join('')}</div>
+ <div class="grid g2" style="margin-top:20px"><div class="card"><h3>الإنجاز حسب المسؤول</h3><table><tr><th>المسؤول</th><th>المهام</th><th>مكتملة</th><th>متأخرة</th><th style="width:30%">الإنجاز</th></tr>${Object.entries(by).map(([o,v])=>`<tr><td>${esc(pname(o))}</td><td>${v.n}</td><td>${v.d}</td><td style="${v.l?'color:var(--bad);font-weight:700':''}">${v.l}</td><td><div class="bar"><i style="width:${Math.round(v.d/v.n*100)}%"></i></div></td></tr>`).join('')}</table></div>
+ <div class="card"><h3>فرص التحسين المقترحة</h3><ul style="margin:0;padding-inline-start:22px;line-height:2.1">${improve().map(x=>`<li>${x}</li>`).join('')}</ul></div></div>
+ ${D.log?`<div class="card noprint" style="margin-top:20px"><h3>آخر النشاطات</h3>${D.log.slice(0,10).map(l=>`<div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)">${av(l.by,pname(l.by))}<div style="flex:1"><b>${esc(pname(l.by))}</b> — ${({add:'أضاف',edit:'حدّث',del:'حذف',login:'دخل النظام'})[l.act]||l.act} ${esc(l.act==='login'?'':l.title||'')}</div><span class="small muted">${ago(l.at)}</span></div>`).join('')}</div>`:''}`};
+function improve(){const out=[],T=D.task||[],K=D.kpi||[];const late=T.filter(isLate);if(late.length)out.push(`معالجة <b>${late.length}</b> مهمة متأخرة بإعادة جدولتها أو توزيعها.`);
+ const old=pending().filter(r=>Date.now()-(r.at||0)>3*864e5);if(old.length)out.push(`<b>${old.length}</b> طلب ينتظر أكثر من 3 أيام — يُقترح تحديد مدة قصوى للرد.`);
+ K.filter(kBad).forEach(k=>out.push(`رفع مؤشر «${esc(k.name)}» من ${esc(k.actual)} إلى ${esc(k.target)} بخطة ومسؤول.`));
+ const cnt={};T.filter(t=>t.status!=='مكتملة').forEach(t=>cnt[t.owner]=(cnt[t.owner]||0)+1);const mx=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];if(mx&&mx[1]>=3)out.push(`المهام المفتوحة متركزة لدى ${esc(pname(mx[0]))} (${mx[1]}) — يُنصح بتوزيعها.`);
+ return out.length?out:['الأداء ضمن المستهدف — لا ملاحظات حالياً.']}
+V.users=()=>{const U=D.users||[];return`<h1 class="pg">المستخدمون والصلاحيات</h1><p class="sub">حدّد لكل شخص ما يراه وما يستطيع فعله — يُطبّق فوراً ويصله تنبيه</p>
+ <div class="tools"><div style="flex:1"></div><button class="btn pri" data-act="userNew">${ic('plus')}مستخدم جديد</button></div>
+ <div class="card tbl"><table><tr><th>المستخدم</th><th>اسم الدخول</th><th>الصفة</th><th>الصلاحيات</th><th>الحالة</th></tr>${U.map(u=>`<tr class="click" data-user="${u.id}"><td><span class="row">${av(u.id,u.name)}<b>${esc(u.name)}</b></span></td><td dir="ltr" style="text-align:end">${esc(u.id)}</td><td>${esc(u.title||'—')}</td><td>${u.admin?'<span class="pill p-blue">مدير النظام</span>':`<span class="small">${D.mods.filter(m=>u.perms?.[m.k]?.v).map(m=>m.n.split(' ')[0]).join('، ')||'—'}${D.mods.some(m=>u.perms?.[m.k]?.ap)?' · <b>اعتماد</b>':''}</span>`}</td><td>${u.active?'<span class="pill p-ok">مفعّل</span>':'<span class="pill p-gray">موقوف</span>'}</td></tr>`).join('')}</table></div>
+ <div class="card" style="margin-top:20px"><h3>بيانات العرض</h3><p class="muted small" style="margin-top:0">لعرض الفكرة على الإدارة حمّل بيانات تجريبية، ثم امسحها قبل التشغيل الفعلي.</p><div class="row"><button class="btn" data-act="seed">تحميل بيانات تجريبية</button><button class="btn bad" data-act="wipe">مسح بيانات العرض</button></div></div>`};
+
+function modal(t,body,foot,wide){closeM();const o=document.createElement('div');o.className='ov';o.id='ov';o.innerHTML=`<div class="md ${wide?'wide':''}"><div class="hd"><h3>${t}</h3><button class="btn ghost sm" data-act="close">${ic('x')}</button></div><div class="bd">${body}</div>${foot?`<div class="ft">${foot}</div>`:''}</div>`;o.addEventListener('mousedown',e=>{if(e.target===o)closeM()});document.body.appendChild(o)}
 function closeM(){$('#ov')?.remove()}
 const opt=(a,v)=>a.map(x=>`<option ${x===v?'selected':''}>${x}</option>`).join('');
-const pplOpt=v=>D.people.map(p=>`<option value="${p.id}" ${p.id===v?'selected':''}>${esc(p.name)}</option>`).join('');
+const ppl=v=>D.people.map(p=>`<option value="${p.id}" ${p.id===v?'selected':''}>${esc(p.name)}</option>`).join('');
 const FORMS={
- req:d=>`<div class="fg"><div class="f full"><label>عنوان الطلب</label><input class="in" name="title" value="${esc(d.title)}" required></div><div class="f"><label>النوع</label><select class="in" name="type">${opt(['أكاديمي','موارد بشرية','مالي','بحثي','طلابي','أخرى'],d.type)}</select></div><div class="f"><label>مقدم الطلب</label><input class="in" name="applicant" value="${esc(d.applicant||(d.id?'':me().name))}"></div><div class="f"><label>الأولوية</label><select class="in" name="priority">${opt(['منخفضة','متوسطة','عالية'],d.priority||'متوسطة')}</select></div><div class="f"><label>الموعد المطلوب</label><input class="in" type="date" name="due" value="${esc(d.due)}"></div><div class="f full"><label>التفاصيل</label><textarea class="in" name="details">${esc(d.details)}</textarea></div></div>`,
- task:d=>{const own=d.id&&d.owner===me().id&&!CAN('task','e');return`<div class="fg"><div class="f full"><label>المهمة</label><input class="in" name="title" value="${esc(d.title)}" ${own?'disabled':''}></div><div class="f"><label>المسؤول</label><select class="in" name="owner" ${own?'disabled':''}>${pplOpt(d.owner||me().id)}</select></div><div class="f"><label>الموعد</label><input class="in" type="date" name="due" value="${esc(d.due)}" ${own?'disabled':''}></div><div class="f"><label>الحالة</label><select class="in" name="status">${opt(['لم تبدأ','جارية','مكتملة'],d.status||'لم تبدأ')}</select></div><div class="f"><label>نسبة الإنجاز %</label><input class="in" type="number" min="0" max="100" name="progress" value="${esc(d.progress||0)}"></div><div class="f"><label>الأولوية</label><select class="in" name="priority" ${own?'disabled':''}>${opt(['منخفضة','متوسطة','عالية'],d.priority||'متوسطة')}</select></div><div class="f full"><label>تفاصيل</label><textarea class="in" name="details" ${own?'disabled':''}>${esc(d.details)}</textarea></div></div>`},
- dec:d=>`<div class="fg"><div class="f full"><label>عنوان القرار / التعميم</label><input class="in" name="title" value="${esc(d.title)}"></div><div class="f"><label>الرقم</label><input class="in" name="no" value="${esc(d.no)}"></div><div class="f"><label>الفئة المستهدفة</label><input class="in" name="audience" value="${esc(d.audience||'الجميع')}"></div><div class="f"><label>تاريخ الإصدار</label><input class="in" type="date" name="date" value="${esc(d.date||today())}"></div><div class="f"><label>ساري حتى</label><input class="in" type="date" name="until" value="${esc(d.until)}"></div><div class="f full"><label>النص</label><textarea class="in" name="body" style="min-height:140px">${esc(d.body)}</textarea></div></div>`,
- kpi:d=>`<div class="fg"><div class="f full"><label>اسم المؤشر</label><input class="in" name="name" value="${esc(d.name)}"></div><div class="f"><label>المستهدف</label><input class="in" name="target" value="${esc(d.target)}"></div><div class="f"><label>القيمة الفعلية</label><input class="in" name="actual" value="${esc(d.actual)}"></div><div class="f"><label>الوحدة</label><input class="in" name="unit" value="${esc(d.unit||'%')}"></div><div class="f"><label>الاتجاه</label><select class="in" name="better"><option value="high" ${d.better!=='low'?'selected':''}>الأعلى أفضل</option><option value="low" ${d.better==='low'?'selected':''}>الأقل أفضل</option></select></div><div class="f"><label>الفترة</label><input class="in" name="period" value="${esc(d.period)}"></div><div class="f"><label>المسؤول</label><select class="in" name="owner"><option value="">—</option>${pplOpt(d.owner)}</select></div></div>`};
-const MN={req:'الطلب',task:'المهمة',dec:'القرار',kpi:'المؤشر'};
-function openDoc(m,id){const d=id?(D[m]||[]).find(x=>x.id===id):{};if(!d)return;
- const canEdit=!id?CAN(m,'a'):(CAN(m,'e')||(m==='task'&&d.owner===me().id));
- if(m==='req'&&id){const hist=(d.hist||[]).map(h=>`<div><b>${esc(h.s)}</b> — ${esc(pname(h.by))} <span class="muted small">${ago(h.at)}</span>${h.note?`<div class="small muted">${esc(h.note)}</div>`:''}</div>`).join('');
-  const apBtns=CAN('req','ap')&&['جديد','قيد الدراسة'].includes(d.status)?`<button class="btn ok" data-st="معتمد" data-rid="${id}">${ic('check',16)}اعتماد</button><button class="btn" data-st="قيد الدراسة" data-rid="${id}">قيد الدراسة</button><button class="btn bad" data-st="مرفوض" data-rid="${id}">رفض</button>`:'';
-  return modal(esc(d.title),`<div class="row" style="margin-bottom:12px"><span class="pill ${RS[d.status]}">${esc(d.status)}</span><span class="muted small">${esc(d.type||'')} · ${esc(d.applicant||pname(d.by))} · الموعد ${fmtD(d.due)} · أولوية ${esc(d.priority||'—')}</span></div>${d.details?`<p>${esc(d.details)}</p>`:''}
-  ${apBtns?`<div class="f" style="margin:14px 0"><label>ملاحظة القرار (اختياري)</label><input class="in" id="stNote"></div>`:''}<h4 style="margin:16px 0 8px">مسار الطلب</h4><div class="tl">${hist}</div>`,
-  `${apBtns}${CAN('req','e')?`<button class="btn" data-edit="req:${id}">تعديل</button>`:''}${CAN('req','d')?`<button class="btn bad" data-del="req:${id}">حذف</button>`:''}`)}
- if(!canEdit&&id){const body=m==='dec'?`<div class="row" style="margin-bottom:10px">${decPill(d)}<span class="muted small">رقم ${esc(d.no||'—')} · ${fmtD(d.date)} ← ${d.until?fmtD(d.until):'مفتوح'} · ${esc(d.audience||'')}</span></div><p style="white-space:pre-wrap">${esc(d.body)}</p>`:`<pre style="font-family:inherit;white-space:pre-wrap">${esc(d.title||d.name)}</pre>`;return modal(esc(d.title||d.name),body,CAN(m,'d')?`<button class="btn bad" data-del="${m}:${id}">حذف</button>`:'')}
- modal((id?'تعديل ':'إضافة ')+MN[m],`<form id="df">${FORMS[m](d)}</form>`,`<button class="btn pri" data-save="${m}:${id||''}">حفظ</button><button class="btn" data-act="close">إلغاء</button>${id&&CAN(m,'d')?`<button class="btn bad" data-del="${m}:${id}" style="margin-inline-start:auto">حذف</button>`:''}`)}
+ req:d=>`<div class="fg"><div class="f full"><label>عنوان الطلب</label><input class="in" name="title" value="${esc(d.title)}"></div><div class="f"><label>النوع</label><select class="in" name="type">${opt(['أكاديمي','موارد بشرية','مالي','بحثي','طلابي','أخرى'],d.type)}</select></div><div class="f"><label>مقدم الطلب</label><input class="in" name="applicant" value="${esc(d.applicant||(d.id?'':me().name))}"></div><div class="f"><label>الأولوية</label><select class="in" name="priority">${opt(['منخفضة','متوسطة','عالية'],d.priority||'متوسطة')}</select></div><div class="f"><label>مطلوب قبل</label><input class="in" type="date" name="due" value="${esc(d.due)}"></div><div class="f full"><label>التفاصيل</label><textarea class="in" name="details">${esc(d.details)}</textarea></div></div>`,
+ task:d=>{const own=d.id&&d.owner===me().id&&!CAN('task','e');return`<div class="fg"><div class="f full"><label>المهمة</label><input class="in" name="title" value="${esc(d.title)}" ${own?'disabled':''}></div><div class="f"><label>المسؤول</label><select class="in" name="owner" ${own?'disabled':''}>${ppl(d.owner||me().id)}</select></div><div class="f"><label>الموعد</label><input class="in" type="date" name="due" value="${esc(d.due)}" ${own?'disabled':''}></div><div class="f"><label>الحالة</label><select class="in" name="status">${opt(['لم تبدأ','جارية','مكتملة'],d.status||'لم تبدأ')}</select></div><div class="f"><label>نسبة الإنجاز: <b id="pv">${+d.progress||0}%</b></label><input type="range" min="0" max="100" step="10" name="progress" value="${+d.progress||0}" style="width:100%;height:40px" oninput="document.getElementById('pv').textContent=this.value+'%'"></div><div class="f full"><label>ملاحظات</label><textarea class="in" name="details" ${own?'disabled':''}>${esc(d.details)}</textarea></div></div>`},
+ kpi:d=>`<div class="fg"><div class="f full"><label>اسم المؤشر</label><input class="in" name="name" value="${esc(d.name)}"></div><div class="f"><label>المستهدف</label><input class="in" name="target" value="${esc(d.target)}"></div><div class="f"><label>القيمة الفعلية</label><input class="in" name="actual" value="${esc(d.actual)}"></div><div class="f"><label>الوحدة</label><input class="in" name="unit" value="${esc(d.unit||'%')}"></div><div class="f"><label>الاتجاه</label><select class="in" name="better"><option value="high" ${d.better!=='low'?'selected':''}>الأعلى أفضل</option><option value="low" ${d.better==='low'?'selected':''}>الأقل أفضل</option></select></div><div class="f full"><label>الفترة</label><input class="in" name="period" value="${esc(d.period)}"></div></div>`};
+const MN={req:'طلب',task:'مهمة',kpi:'مؤشر'};
+function formModal(m,d){const id=d.id;const ro=m==='task'&&id&&!CAN('task','e')&&d.owner!==me().id;if(ro)return modal(esc(d.title),`<p>المسؤول: <b>${esc(pname(d.owner))}</b> · الموعد ${fmtD(d.due)} · ${esc(d.status)} · ${+d.progress||0}%</p>${d.details?`<p>${esc(d.details)}</p>`:''}`);
+ modal((id?'تعديل ':'إضافة ')+MN[m],`<form id="df">${FORMS[m](d)}</form>`,`<button class="btn pri lg" data-save="${m}:${id||''}">حفظ</button><button class="btn" data-act="close">إلغاء</button>${id&&CAN(m,'d')?`<button class="btn bad" data-del="${m}:${id}" style="margin-inline-start:auto">حذف</button>`:''}`)}
+function openReq(id){const r=D.req.find(x=>x.id===id);if(!r)return;const cls=s=>s==='معتمد'?'ok':s==='مرفوض'?'bad':s==='معاد للاستكمال'?'warn':'';
+ const canResub=r.by===me().id&&r.status==='معاد للاستكمال';
+ modal(esc(r.title),`<div class="row" style="margin-bottom:6px"><span class="pill ${SP[r.status]}">${esc(r.status)}</span><span class="muted small">${esc(r.type||'')} · ${esc(r.applicant||pname(r.by))} · أولوية ${esc(r.priority||'—')} · مطلوب قبل ${fmtD(r.due)}</span></div>${steps(r)}
+ ${r.details?`<p>${esc(r.details)}</p>`:''}${CAN('req','ap')&&PENDING.includes(r.status)?`<div class="f" style="margin-top:14px"><label>ملاحظة مع القرار (اختياري)</label><input class="in" id="stNote" placeholder="تصل لصاحب الطلب"></div>`:''}
+ <h4 style="margin:18px 0 12px">خط السير بالتفصيل</h4><div class="tl">${(r.hist||[]).map(h=>`<div class="ev ${cls(h.s)}"><i></i><b>${esc(h.s)}</b><span class="small muted">${esc(pname(h.by))} · ${fmtT(h.at)}</span>${h.note?`<div class="small" style="color:var(--tx2)">«${esc(h.note)}»</div>`:''}</div>`).join('')}</div>`,
+ `${decisionBtns(r,false)}${canResub?`<button class="btn pri" data-resub="${r.id}">${ic('flow')}إعادة الإرسال لرئيس القسم</button>`:''}${CAN('req','e')||canResub?`<button class="btn" data-edit="${r.id}">تعديل</button>`:''}${CAN('req','d')?`<button class="btn bad" data-del="req:${r.id}" style="margin-inline-start:auto">حذف</button>`:''}`,true)}
 const PL={v:'عرض',a:'إضافة',e:'تعديل',d:'حذف',ap:'اعتماد'};
-function userModal(id){const u=id?D.users.find(x=>x.id===id):{perms:{},active:true,preset:'staff'};if(!id)u.perms=PRESETS.staff.p();const P=JSON.parse(JSON.stringify(u.perms||{}));
- const mx=()=>`<table class="mx"><tr><th>الوحدة</th>${Object.values(PL).map(p=>`<th>${p}</th>`).join('')}</tr>${D.mods.map(m=>`<tr><td>${m.n}</td>${Object.keys(PL).map(p=>(m.viewOnly&&p!=='v')||(p==='ap'&&!m.ap)?'<td class="muted">—</td>':`<td><input type="checkbox" data-pm="${m.k}.${p}" ${P[m.k]?.[p]?'checked':''} ${u.admin?'disabled checked':''}></td>`).join('')}</tr>`).join('')}</table>`;
- modal(id?'تعديل المستخدم والصلاحيات':'مستخدم جديد',`<div class="fg"><div class="f"><label>الاسم</label><input class="in" id="uN" value="${esc(u.name)}"></div><div class="f"><label>اسم الدخول (إنجليزي)</label><input class="in" id="uI" dir="ltr" value="${esc(u.id)}" ${id?'disabled':''} placeholder="ahmed"></div>
- <div class="f"><label>الصفة / المنصب</label><input class="in" id="uT" value="${esc(u.title)}" placeholder="عميد الكلية، رئيس قسم، سكرتير…"></div><div class="f"><label>البريد الإلكتروني</label><input class="in" id="uE" dir="ltr" value="${esc(u.email)}"></div>
- <div class="f full"><label>${id?'كلمة مرور جديدة (اتركها فارغة لعدم التغيير)':'كلمة المرور'}</label><div class="row"><input class="in" id="uP" dir="ltr" style="flex:1" autocomplete="new-password"><button class="btn" type="button" data-act="genPw">توليد كلمة قوية</button></div><div class="small muted" style="margin-top:4px">10 أحرف على الأقل. سيُطلب من المستخدم تغييرها عند أول دخول.</div></div></div>
- ${id==='khaled'?'':`<div class="row" style="margin:14px 0"><label class="sw"><input type="checkbox" id="uA" ${u.active?'checked':''}> الحساب مفعّل</label><label class="sw"><input type="checkbox" id="uAd" ${u.admin?'checked':''}> مدير نظام (كل الصلاحيات + إدارة المستخدمين)</label></div>`}
- <div class="row" style="margin:14px 0 8px"><b style="flex:1">الصلاحيات</b><span class="small muted">قالب جاهز:</span>${Object.entries(D.presets).map(([k,n])=>`<button class="chip" type="button" data-preset="${k}">${n}</button>`).join('')}</div><div id="mxw">${mx()}</div>`,
- `<button class="btn pri" data-act="userSave" data-id="${id||''}">حفظ</button><button class="btn" data-act="close">إلغاء</button>${id&&id!=='khaled'?`<button class="btn bad" data-act="userDel" data-id="${id}" style="margin-inline-start:auto">حذف المستخدم</button>`:''}`,true);
- const ov=$('#ov');ov._P=P;ov._u=u;ov.addEventListener('click',e=>{const pr=e.target.closest('[data-preset]');if(pr){Object.assign(P,PRESETS[pr.dataset.preset].p());ov._preset=pr.dataset.preset;$('#mxw').innerHTML=mx()}});
- ov.addEventListener('change',e=>{const c=e.target.closest('[data-pm]');if(c){const[m,p]=c.dataset.pm.split('.');P[m]=P[m]||{};P[m][p]=c.checked?1:0;if(p!=='v'&&c.checked){P[m].v=1;$('#mxw').innerHTML=mx()}if(p==='v'&&!c.checked){P[m]={v:0};$('#mxw').innerHTML=mx()}}})}
-function pwModal(force){modal(force?'يرجى تعيين كلمة مرور جديدة':'تغيير كلمة المرور',`<div class="fg"><div class="f full"><label>كلمة المرور الحالية</label><input class="in" type="password" id="po" dir="ltr"></div><div class="f full"><label>كلمة المرور الجديدة (10 أحرف على الأقل)</label><input class="in" type="password" id="pn" dir="ltr" autocomplete="new-password"></div></div><div class="err" id="pe"></div>`,`<button class="btn pri" data-act="pwSave">حفظ</button>${force?'':'<button class="btn" data-act="close">إلغاء</button>'}`)}
+function userModal(id){const u=id?D.users.find(x=>x.id===id):{perms:PRESETS.staff.p(),active:true,preset:'staff'};const Pm=JSON.parse(JSON.stringify(u.perms||{}));
+ const mx=()=>`<table class="mx"><tr><th>القسم</th>${Object.values(PL).map(p=>`<th>${p}</th>`).join('')}</tr>${D.mods.map(m=>`<tr><td>${m.n}</td>${Object.keys(PL).map(p=>(m.viewOnly&&p!=='v')||(p==='ap'&&!m.ap)?'<td class="muted">—</td>':`<td><input type="checkbox" data-pm="${m.k}.${p}" ${Pm[m.k]?.[p]?'checked':''} ${u.admin?'disabled checked':''}></td>`).join('')}</tr>`).join('')}</table>`;
+ modal(id?'تعديل المستخدم والصلاحيات':'مستخدم جديد',`<div class="fg"><div class="f"><label>الاسم</label><input class="in" id="uN" value="${esc(u.name)}"></div><div class="f"><label>اسم الدخول (بالإنجليزي)</label><input class="in" id="uI" dir="ltr" value="${esc(u.id)}" ${id?'disabled':''} placeholder="dean"></div>
+ <div class="f"><label>الصفة</label><input class="in" id="uT" value="${esc(u.title)}" placeholder="عميد الكلية، رئيس القسم…"></div><div class="f"><label>البريد (اختياري)</label><input class="in" id="uE" dir="ltr" value="${esc(u.email)}"></div>
+ <div class="f full"><label>${id?'كلمة مرور جديدة (اتركها فارغة إن لم ترد تغييرها)':'كلمة المرور'}</label><div class="row" style="flex-wrap:nowrap"><input class="in" id="uP" dir="ltr" autocomplete="new-password"><button class="btn" type="button" data-act="genPw">توليد</button></div><div class="small muted" style="margin-top:4px">10 أحرف على الأقل، ويغيّرها المستخدم عند أول دخول.</div></div></div>
+ ${id==='khaled'?'':`<div class="row" style="margin:16px 0"><label class="sw"><input type="checkbox" id="uA" ${u.active?'checked':''}> الحساب مفعّل</label><label class="sw"><input type="checkbox" id="uAd" ${u.admin?'checked':''}> مدير نظام</label></div>`}
+ <div class="row" style="margin:16px 0 10px"><b style="flex:1">الصلاحيات</b><span class="small muted">قالب جاهز:</span>${Object.entries(D.presets).map(([k,n])=>`<button class="chip" type="button" data-preset="${k}">${n}</button>`).join('')}</div><div id="mxw">${mx()}</div>`,
+ `<button class="btn pri lg" data-act="userSave" data-id="${id||''}">حفظ</button><button class="btn" data-act="close">إلغاء</button>${id&&id!=='khaled'?`<button class="btn bad" data-act="userDel" data-id="${id}" style="margin-inline-start:auto">حذف المستخدم</button>`:''}`,true);
+ const ov=$('#ov');ov._P=Pm;ov._u=u;ov.addEventListener('click',e=>{const pr=e.target.closest('[data-preset]');if(pr){Object.keys(Pm).forEach(k=>delete Pm[k]);Object.assign(Pm,PRESETS[pr.dataset.preset].p());ov._preset=pr.dataset.preset;$('#mxw').innerHTML=mx()}});
+ ov.addEventListener('change',e=>{const c=e.target.closest('[data-pm]');if(c){const[m,p]=c.dataset.pm.split('.');Pm[m]=Pm[m]||{};Pm[m][p]=c.checked?1:0;if(p!=='v'&&c.checked)Pm[m].v=1;if(p==='v'&&!c.checked)Pm[m]={v:0};$('#mxw').innerHTML=mx()}})}
+function pwModal(force){modal(force?'اختر كلمة مرور جديدة':'تغيير كلمة المرور',`<div class="fg"><div class="f full"><label>كلمة المرور الحالية</label><input class="in" type="password" id="po" dir="ltr"></div><div class="f full"><label>كلمة المرور الجديدة (10 أحرف على الأقل)</label><input class="in" type="password" id="pn" dir="ltr" autocomplete="new-password"></div></div><div class="err" id="pe"></div>`,`<button class="btn pri lg" data-act="pwSave">حفظ</button>${force?'':'<button class="btn" data-act="close">إلغاء</button>'}`)}
 const genPw=()=>{const a='ABCDEFGHJKLMNPQRSTUVWXYZ',b='abcdefghijkmnpqrstuvwxyz',c='23456789',d='#@$%&*!?';const r=s=>s[crypto.getRandomValues(new Uint32Array(1))[0]%s.length];let p=r(a)+r(b)+r(c)+r(d);for(let i=0;i<10;i++)p+=r(a+b+c+d);return p.split('').sort(()=>Math.random()-.5).join('')};
 
-/* ---------- events ---------- */
-async function act(fn,ok){try{await fn();if(ok)toast(ok);closeM();D=await API('boot');render()}catch(e){toast(errMsg(e))}}
-document.addEventListener('click',async e=>{const t=e.target.closest('[data-go],[data-act],[data-open],[data-new],[data-save],[data-del],[data-edit],[data-st],[data-freq],[data-user],[data-nt]');
+async function act(fn,ok){try{await fn();closeM();D=await API('boot');render();if(ok)toast(ok)}catch(e){toast(errMsg(e),1)}}
+document.addEventListener('click',async e=>{const t=e.target.closest('[data-go],[data-act],[data-open],[data-new],[data-save],[data-del],[data-edit],[data-st],[data-flt],[data-user],[data-nt],[data-task],[data-kpi],[data-resub]');
  if(POP&&!e.target.closest('#pop')&&!e.target.closest('[data-act=bell]')){POP=false;$('#pop')?.remove()}
  if(!t)return;const ds=t.dataset;
+ if(ds.st){const msg={'عند العميد':'تم الاعتماد والإحالة للعميد ✓','معتمد':'تم الاعتماد النهائي ✓','مرفوض':'تم رفض الطلب','معاد للاستكمال':'أُعيد الطلب لصاحبه للاستكمال'}[ds.st];return act(()=>API('save',{mod:'req',doc:{id:ds.rid,status:ds.st,note:$('#stNote')?.value||''}}),msg)}
  if(ds.nt){API('read',{id:ds.nt}).catch(()=>{});const n=D.notif.find(x=>x.id===ds.nt);if(n)n.read=true}
- if(ds.go){PAGE=ds.go;F.q='';POP=false;location.hash=PAGE;$('#nav')?.classList.remove('open');render();scrollTo(0,0);return}
- if(ds.open){const[m,id]=ds.open.split(':');return openDoc(m,id)}
- if(ds.new)return openDoc(ds.new);
- if(ds.edit){const[m,id]=ds.edit.split(':');const d=D[m].find(x=>x.id===id);return modal('تعديل '+MN[m],`<form id="df">${FORMS[m](d)}</form>`,`<button class="btn pri" data-save="${m}:${id}">حفظ</button><button class="btn" data-act="close">إلغاء</button>`)}
- if(ds.save){const[m,id]=ds.save.split(':');const f=$('#df');const doc={id:id||undefined};f.querySelectorAll('[name]').forEach(i=>{if(!i.disabled)doc[i.name]=i.value});if(!(doc.title||doc.name||'').trim()&&!(id&&m==='task'))return toast('العنوان مطلوب');return act(()=>API('save',{mod:m,doc}),'تم الحفظ')}
- if(ds.del){const[m,id]=ds.del.split(':');if(!confirm('تأكيد الحذف؟ لا يمكن التراجع.'))return;return act(()=>API('del',{mod:m,id}),'تم الحذف')}
- if(ds.st)return act(()=>API('save',{mod:'req',doc:{id:ds.rid,status:ds.st,note:$('#stNote')?.value||''}}),'تم: '+ds.st);
- if(ds.freq){F.req=ds.freq;return render()}
+ if(ds.flt){F.st=ds.flt;F.q='';PAGE='req';location.hash='req';render();scrollTo(0,0);return}
+ if(ds.go){PAGE=ds.go;F.q='';F.st=ds.f||'all';POP=false;location.hash=PAGE;render();scrollTo(0,0);return}
+ if(ds.open)return openReq(ds.open);
+ if(ds.task)return formModal('task',D.task.find(x=>x.id===ds.task));
+ if(ds.kpi){const k=D.kpi.find(x=>x.id===ds.kpi);return CAN('kpi','e')?formModal('kpi',k):null}
+ if(ds.new)return formModal(ds.new,{});
+ if(ds.edit)return formModal('req',D.req.find(x=>x.id===ds.edit));
+ if(ds.resub)return act(()=>API('save',{mod:'req',doc:{id:ds.resub,status:'عند رئيس القسم'}}),'أُعيد إرسال الطلب ✓');
+ if(ds.save){const[m,id]=ds.save.split(':');const doc={id:id||undefined};$('#df').querySelectorAll('[name]').forEach(i=>{if(!i.disabled)doc[i.name]=i.value});if(!(doc.title||doc.name||'').trim()&&!(id&&m==='task'))return toast('اكتب العنوان أولاً',1);return act(()=>API('save',{mod:m,doc}),'تم الحفظ ✓')}
+ if(ds.del){const[m,id]=ds.del.split(':');if(!confirm('هل أنت متأكد من الحذف؟'))return;return act(()=>API('del',{mod:m,id}),'تم الحذف')}
  if(ds.user)return userModal(ds.user);
  switch(ds.act){
   case'close':return closeM();
-  case'menu':return $('#nav').classList.toggle('open');
+  case'theme':{const n=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=n;LSS('bs_theme',n);return D?render():renderLogin()}
+  case'big':{const b=document.documentElement.classList.toggle('big');LSS('bs_big',b?'1':'0');return D?render():renderLogin()}
   case'bell':POP=!POP;render();return;
+  case'menu':case'pw':return pwModal(false);
   case'readAll':return act(()=>API('read'));
   case'logout':await API('logout').catch(()=>{});D=null;return renderLogin();
-  case'pw':return pwModal(false);
-  case'pwSave':try{await API('pw',{old:$('#po').value,pass:$('#pn').value});closeM();toast('تم تغيير كلمة المرور')}catch(er){$('#pe').textContent=errMsg(er)}return;
+  case'pwSave':try{await API('pw',{old:$('#po').value,pass:$('#pn').value});closeM();toast('تم تغيير كلمة المرور ✓')}catch(er){$('#pe').textContent=errMsg(er)}return;
   case'userNew':return userModal();
   case'genPw':$('#uP').value=genPw();return;
   case'userSave':{const ov=$('#ov'),id=ds.id;const u={id:id||$('#uI').value,name:$('#uN').value,title:$('#uT').value,email:$('#uE').value,perms:ov._P,preset:ov._preset||ov._u.preset,active:$('#uA')?$('#uA').checked:true,admin:$('#uAd')?$('#uAd').checked:!!ov._u.admin};
-   const pass=$('#uP').value;return act(()=>API('user',{user:u,pass:pass||undefined,temp:!!pass&&id!=='khaled'}),id?'تم تحديث المستخدم':'تم إنشاء المستخدم')}
+   const pass=$('#uP').value;return act(()=>API('user',{user:u,pass:pass||undefined,temp:!!pass&&id!=='khaled'}),id?'تم تحديث المستخدم ✓':'تم إنشاء المستخدم ✓')}
   case'userDel':if(!confirm('حذف هذا المستخدم نهائياً؟'))return;return act(()=>API('userDel',{id:ds.id}),'تم الحذف');
-  case'seed':return act(()=>API('seed'),'تم تحميل البيانات التجريبية');
-  case'wipe':if(!confirm('مسح كل الطلبات والمهام والقرارات والمؤشرات؟'))return;return act(()=>API('wipe'),'تم المسح');
+  case'seed':return act(()=>API('seed'),'تم تحميل البيانات التجريبية ✓');
+  case'wipe':if(!confirm('مسح كل الطلبات والمهام والمؤشرات؟'))return;return act(()=>API('wipe'),'تم المسح');
  }});
 document.addEventListener('input',e=>{if(e.target.id==='q'){F.q=e.target.value.trim();const p=e.target.selectionStart;render();const q=$('#q');q.focus();q.setSelectionRange(p,p)}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();if(POP){POP=false;$('#pop')?.remove()}}});
 addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(D&&h&&h!==PAGE){PAGE=h;render()}});
-if(SRV)setInterval(async()=>{if(!D||document.hidden||$('#ov'))return;try{const n=await API('boot');const newN=n.notif.filter(x=>!x.read&&!D.notif.some(y=>y.id===x.id));D=n;render();if(newN.length)toast('🔔 '+newN[0].text)}catch{}},30000);
+if(SRV)setInterval(async()=>{if(!D||document.hidden||$('#ov'))return;try{const n=await API('boot');const nn=n.notif.filter(x=>!x.read&&!D.notif.some(y=>y.id===x.id));D=n;render();if(nn.length)toast('🔔 '+nn[0].text)}catch{}},30000);
 load();
 </script>
 </body>
