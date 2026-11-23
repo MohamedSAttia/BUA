@@ -55,22 +55,37 @@ async function pg() {
 export const backend = () => PG_URL() ? 'postgres' : (process.env.BLOB_READ_WRITE_TOKEN || LOCAL()) ? 'blob' : null;
 
 // Blob layout: db/<col>.json = {docs:{id:doc}}, db/_meta.json = {revs:{col:n}}
+// Each blob JSON carries a write counter (_v). Reads right after a write can return an older copy, so every
+// instance remembers the newest copy it has seen and keeps whichever of the two has the higher counter.
+const seen = {};
 async function bget(path) {
-  try { const r = await get(path, { access: 'private', useCache: false }); if (!r) return { data: null, etag: null };
-    const txt = await new Response(r.stream).text(); return { data: JSON.parse(txt || 'null'), etag: r.blob.etag }; }
-  catch (e) { if (/not.?found/i.test(String(e?.message || e?.name))) return { data: null, etag: null }; throw e; }
+  let remote = { data: null, etag: null };
+  try { const r = await get(path, { access: 'private', useCache: false });
+    if (r) { const txt = await new Response(r.stream).text(); remote = { data: JSON.parse(txt || 'null'), etag: r.blob.etag }; } }
+  catch (e) { if (!/not.?found/i.test(String(e?.message || e?.name))) throw e; }
+  const mine = seen[path];
+  if (mine && (!remote.data || (mine.data?._v || 0) > (remote.data?._v || 0))) return mine;
+  if (remote.data) seen[path] = remote;
+  return remote;
 }
 async function bput(path, data, etag) {
   const opts = { access: 'private', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60 };
   if (etag) opts.ifMatch = etag; else opts.allowOverwrite = false;
-  return put(path, JSON.stringify(data), opts);
+  const r = await put(path, JSON.stringify(data), opts);
+  if (r?.etag) seen[path] = { data, etag: r.etag };
+  return r;
 }
 async function bmutate(path, fn, empty) {
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 12; i++) {
     const { data, etag } = await bget(path);
-    const next = fn(data || structuredClone(empty));
+    const base = data || structuredClone(empty);
+    const next = fn(structuredClone(base)); next._v = (base._v || 0) + 1;
     try { await bput(path, next, etag); return next; }
-    catch (e) { if (i === 7) throw e; await new Promise(r => setTimeout(r, 40 + Math.random() * 120)); }
+    catch (e) {
+      if (i === 11) throw e;
+      delete seen[path];
+      await new Promise(r => setTimeout(r, Math.min(1500, 80 * 2 ** i) * (0.6 + Math.random() * 0.8)));
+    }
   }
 }
 let metaCache = { at: 0, v: null };
@@ -112,8 +127,7 @@ export async function writeDoc(col, id, doc) {
     else await sql`insert into docs (col, id, data, updated, deleted) values (${col}, ${id}, ${JSON.stringify(doc)}, ${now}, false) on conflict (col, id) do update set data = excluded.data, updated = excluded.updated, deleted = false`;
     return; }
   await bmutate(`db/${col}.json`, d => { d.docs = d.docs || {}; if (doc === null) delete d.docs[id]; else d.docs[id] = doc; return d; }, { docs: {} });
-  await bmutate('db/_meta.json', m => { m.revs = m.revs || {}; m.revs[col] = (m.revs[col] || 0) + 1; return m; }, { revs: {} });
-  metaCache.at = 0;
+  if (!/^_?s_/.test(col)) { await bmutate('db/_meta.json', m => { m.revs = m.revs || {}; m.revs[col] = (m.revs[col] || 0) + 1; return m; }, { revs: {} }); metaCache.at = 0; }
 }
 export async function readCol(col) {
   const be = backend();
