@@ -1,17 +1,22 @@
 // Shared core for the simplified system — used by the server (api/s.js) and by the in-browser demo store.
 export const MODS = [
-  { k: 'req', n: 'الطلبات وخط السير', ap: true },
-  { k: 'task', n: 'المتابعة والمهام' },
-  { k: 'kpi', n: 'مؤشرات الأداء' },
-  { k: 'rep', n: 'التقارير', viewOnly: true }
+  { k: 'req', n: 'الطلبات وخط السير', ap: true, g: 'العمل اليومي' },
+  { k: 'task', n: 'المتابعة والمهام', g: 'العمل اليومي' },
+  { k: 'meet', n: 'الاجتماعات', g: 'العمل اليومي' },
+  { k: 'com', n: 'اللجان', g: 'التنظيم' },
+  { k: 'dec', n: 'القرارات والتعاميم', g: 'التنظيم' },
+  { k: 'let', n: 'الخطابات', ap: true, g: 'التنظيم' },
+  { k: 'pol', n: 'الأدلة والسياسات', g: 'التنظيم' },
+  { k: 'kpi', n: 'مؤشرات الأداء', g: 'الأداء' },
+  { k: 'rep', n: 'التقارير', viewOnly: true, g: 'الأداء' }
 ];
 export const PRESETS = {
   full: { n: 'صلاحيات كاملة', p: () => Object.fromEntries(MODS.map(m => [m.k, { v: 1, a: m.viewOnly ? 0 : 1, e: m.viewOnly ? 0 : 1, d: m.viewOnly ? 0 : 1, ap: m.ap ? 1 : 0 }])) },
   lead: { n: 'قيادي (عميد / رئيس قسم)', p: () => Object.fromEntries(MODS.map(m => [m.k, { v: 1, a: m.viewOnly ? 0 : 1, e: m.viewOnly ? 0 : 1, d: 0, ap: m.ap ? 1 : 0 }])) },
-  staff: { n: 'موظف / عضو', p: () => ({ req: { v: 1, a: 1, e: 0, d: 0, ap: 0 }, task: { v: 1, a: 0, e: 0, d: 0 }, kpi: { v: 1, a: 0, e: 0, d: 0 }, rep: { v: 0 } }) },
+  staff: { n: 'موظف / عضو', p: () => ({ req: { v: 1, a: 1, e: 0, d: 0, ap: 0 }, task: { v: 1, a: 0, e: 0, d: 0 }, meet: { v: 1, a: 0, e: 0, d: 0 }, com: { v: 1 }, dec: { v: 1 }, let: { v: 0 }, pol: { v: 1 }, kpi: { v: 1, a: 0, e: 0, d: 0 }, rep: { v: 0 } }) },
   view: { n: 'اطلاع فقط', p: () => Object.fromEntries(MODS.map(m => [m.k, { v: m.k === 'rep' ? 0 : 1, a: 0, e: 0, d: 0, ap: 0 }])) }
 };
-const COL = { req: 's_req', task: 's_task', kpi: 's_kpi' };
+const COL = { req: 's_req', task: 's_task', kpi: 's_kpi', meet: 's_meet', com: 's_com', dec: 's_dec', let: 's_let', pol: 's_pol' };
 export const FLOW = ['تقديم الطلب', 'عند رئيس القسم', 'عند العميد', 'معتمد'];
 export const PENDING = ['عند رئيس القسم', 'عند العميد'];
 const ADMIN_ID = 'khaled';
@@ -22,7 +27,12 @@ const pub = u => u && ({ id: u.id, name: u.name, title: u.title || '', email: u.
 
 const FIELDS = {
   req: ['title', 'type', 'applicant', 'details', 'status', 'due', 'priority', 'note'],
-  task: ['title', 'owner', 'due', 'status', 'priority', 'details', 'progress'],
+  task: ['title', 'owner', 'due', 'status', 'priority', 'details', 'progress', 'com', 'meet'],
+  meet: ['title', 'date', 'time', 'place', 'com', 'attendees', 'agenda', 'minutes', 'status'],
+  com: ['name', 'chair', 'members', 'mission', 'color'],
+  dec: ['title', 'no', 'date', 'until', 'body', 'audience'],
+  let: ['subject', 'to', 'body', 'ref', 'status'],
+  pol: ['title', 'cat', 'body'],
   kpi: ['name', 'target', 'actual', 'unit', 'period', 'better', 'owner']
 };
 
@@ -79,6 +89,12 @@ export async function handle(store, hp, sessId, act, b) {
       if (st === 'عند العميد') hist.push({ s: 'عند العميد', by: r.by, at: (r.at || Date.now()) + 864e5 });
       await store.writeDoc('s_req', r.id, { ...r, status: st, hist });
     }
+    if (me.preset && PRESETS[me.preset]) { const full = PRESETS[me.preset].p(); const miss = Object.keys(full).filter(k => !(me.perms || {})[k]);
+      if (miss.length) { me.perms = { ...(me.perms || {}) }; for (const k of miss) me.perms[k] = full[k]; await store.writeDoc('s_users', me.id, me); } }
+    if (me.admin && !(await store.readOne('s_meta', 'demo2'))) {
+      if (!(await store.readCol('s_com')).length && !(await store.readCol('s_pol')).length && (await store.readCol('s_req')).length) await seedExtras(store, me.id);
+      await store.writeDoc('s_meta', 'demo2', { id: 'demo2', at: Date.now() });
+    }
     const meta = await store.readOne('s_meta', 'demo');
     if (!meta && me.admin) {
       const [rq, tk] = [await store.readCol('s_req'), await store.readCol('s_task')];
@@ -95,6 +111,7 @@ export async function handle(store, hp, sessId, act, b) {
     const users = await store.readCol('s_users');
     out.people = users.filter(u => u.active !== false).map(u => ({ id: u.id, name: u.name, title: u.title || '' }));
     if (me.admin) out.users = users.map(pub);
+    out.org = (await store.readOne('s_meta', 'org')) || { name: 'القسم' };
     out.notif = (await store.readCol('s_notif')).filter(n => n.to === me.id).sort((a, b) => b.at - a.at).slice(0, 60);
     if (me.admin || can(me, 'rep', 'v')) out.log = (await store.readCol('s_log')).sort((a, b) => b.at - a.at).slice(0, 40);
     return { status: 200, body: out };
@@ -106,12 +123,18 @@ export async function handle(store, hp, sessId, act, b) {
     const isOwnReturned = m === 'req' && old && old.by === me.id && old.status === 'معاد للاستكمال';
     if (old ? !(can(me, m, 'e') || isOwnTask || isOwnReturned || (m === 'req' && can(me, m, 'ap'))) : !can(me, m, 'a')) return { status: 403, body: { error: 'forbidden' } };
     const doc = { ...(old || {}), id: old?.id || rid() };
-    for (const f of FIELDS[m]) if (f in d) doc[f] = clean(d[f], f === 'body' || f === 'details' ? 4000 : 300);
+    for (const f of FIELDS[m]) if (f in d) doc[f] = clean(d[f], ['body', 'details', 'agenda', 'minutes', 'mission'].includes(f) ? 4000 : 300);
     // approval changes need approval permission
     if (m === 'req' && old && d.status && d.status !== old.status && !can(me, 'req', 'ap') && !(isOwnReturned && d.status === 'عند رئيس القسم')) return { status: 403, body: { error: 'forbidden' } };
     if (m === 'req' && isOwnReturned && !can(me, 'req', 'e') && !can(me, 'req', 'ap')) doc.status = 'عند رئيس القسم';
     if (isOwnTask && !can(me, m, 'e')) { for (const f of FIELDS.task) if (!['status', 'progress'].includes(f)) doc[f] = old[f]; }
     if (!old) { doc.by = me.id; doc.at = Date.now(); if (m === 'req') doc.status = 'عند رئيس القسم'; if (m === 'task' && !doc.status) doc.status = 'لم تبدأ'; }
+    if (m === 'let') {
+      if (!old) doc.status = 'مسودة';
+      if (old && d.status === 'معتمد' && old.status !== 'معتمد') { if (!can(me, 'let', 'ap')) return { status: 403, body: { error: 'forbidden' } }; doc.status = 'معتمد'; doc.signedBy = me.id; doc.signedAt = Date.now(); doc.no = doc.no || ('خ/' + new Date().getFullYear() + '/' + String(Math.floor(Math.random() * 900) + 100)); }
+      else if (old && old.status === 'معتمد') { doc.status = 'معتمد'; for (const f of FIELDS.let) if (f !== 'status') doc[f] = old[f]; }
+    }
+    if (m === 'meet' && !old && !doc.status) doc.status = 'مجدول';
     doc.upd = Date.now(); doc.updBy = me.id;
     if (m === 'req' && old && doc.status !== old.status) { doc.hist = [...(old.hist || []), { s: doc.status, by: me.id, at: Date.now(), note: clean(d.note, 300) }]; }
     if (m === 'req' && !old) doc.hist = [{ s: 'تقديم الطلب', by: me.id, at: Date.now() }, { s: doc.status, by: me.id, at: Date.now() }];
@@ -124,6 +147,11 @@ export async function handle(store, hp, sessId, act, b) {
     if (m === 'req' && !old) await notify(store, users.filter(u => can(u, 'req', 'ap')).map(u => u.id), 'طلب جديد بانتظار قرارك: ' + doc.title, 'req', doc.id);
     if (m === 'req' && old && old.status !== doc.status && PENDING.includes(doc.status)) await notify(store, users.filter(u => can(u, 'req', 'ap')).map(u => u.id), `طلب «${doc.title}» وصل إلى: ${doc.status}`, 'req', doc.id);
     if (m === 'req' && old && old.status !== doc.status && doc.by !== me.id) await notify(store, [doc.by], `طلبك «${doc.title}» أصبح: ${doc.status}`, 'req', doc.id);
+    if (m === 'meet' && !old) await notify(store, String(doc.attendees || '').split(',').filter(x => x && x !== me.id), `دعوة لاجتماع: ${doc.title} — ${doc.date || ''} ${doc.time || ''}`, 'meet', doc.id);
+    if (m === 'dec' && !old) await notify(store, users.filter(u => can(u, 'dec', 'v')).map(u => u.id), 'قرار / تعميم جديد: ' + doc.title, 'dec', doc.id);
+    if (m === 'let' && !old) await notify(store, users.filter(u => can(u, 'let', 'ap')).map(u => u.id), 'خطاب بانتظار التوقيع: ' + doc.subject, 'let', doc.id);
+    if (m === 'let' && old && old.status !== 'معتمد' && doc.status === 'معتمد' && doc.by !== me.id) await notify(store, [doc.by], 'تم توقيع الخطاب: ' + doc.subject, 'let', doc.id);
+    if (m === 'com' && doc.chair && (!old || old.chair !== doc.chair) && doc.chair !== me.id) await notify(store, [doc.chair], 'تم تعيينك رئيساً لـ ' + doc.name, 'com', doc.id);
     if (m === 'kpi') { const t = +doc.target, a = +doc.actual; const bad = isFinite(t) && isFinite(a) && (doc.better === 'low' ? a > t : a < t);
       if (bad) await notify(store, users.filter(u => u.admin || can(u, 'kpi', 'e')).map(u => u.id), `مؤشر دون المستهدف: ${doc.name} (${a} من ${t})`, 'kpi', doc.id); }
     return { status: 200, body: { ok: true, doc } };
@@ -166,9 +194,10 @@ export async function handle(store, hp, sessId, act, b) {
     await store.writeDoc('s_users', b.id, null); await store.writeDoc('_s_auth', b.id, null); await log(store, me.id, 'del', 'users', b.id, b.id);
     return { status: 200, body: { ok: true } };
   }
+  if (act === 'org') { const o = { id: 'org', name: clean(b.name, 120) || 'القسم', sub: clean(b.sub, 120) }; await store.writeDoc('s_meta', 'org', o); return { status: 200, body: { ok: true } }; }
   if (act === 'seed') { await seed(store, me.id); await log(store, me.id, 'add', 'sys', '', 'تحميل بيانات تجريبية'); return { status: 200, body: { ok: true } }; }
   if (act === 'wipe') {
-    for (const c of [...Object.values(COL), 's_dec']) for (const d of await store.readCol(c)) await store.writeDoc(c, d.id, null);
+    for (const c of Object.values(COL)) for (const d of await store.readCol(c)) await store.writeDoc(c, d.id, null);
     for (const n of await store.readCol('s_notif')) await store.writeDoc('s_notif', n.id, null);
     await log(store, me.id, 'del', 'sys', '', 'مسح بيانات العرض'); return { status: 200, body: { ok: true } };
   }
@@ -191,5 +220,23 @@ export async function seed(store, by) {
     ['جدولة اجتماع مجلس القسم', 'مكتملة', -1, 100, 'منخفضة'], ['حصر احتياجات التدريب', 'جارية', 6, 30, 'متوسطة'], ['مراجعة توزيع الأعباء التدريسية', 'لم تبدأ', -1, 0, 'عالية']];
   for (const [title, status, due, progress, priority] of T) await W('s_task', { title, status, due: d(due), progress: String(progress), priority, owner: by });
   const K = [['نسبة إنجاز المعاملات في وقتها', 90, 78, '%', 'high'], ['متوسط زمن إنجاز الطلب', 5, 7, 'يوم', 'low'], ['رضا الطلاب عن المقررات', 85, 88, '%', 'high'], ['نسبة المهام المكتملة', 80, 64, '%', 'high'], ['نسبة حضور الاجتماعات', 90, 93, '%', 'high'], ['الأبحاث المنشورة هذا العام', 12, 9, 'بحث', 'high']];
+  await seedExtras(store, by);
   for (const [name, target, actual, unit, better] of K) await W('s_kpi', { name, target: String(target), actual: String(actual), unit, better, period: 'الفصل الأول 1448' });
+}
+
+export async function seedExtras(store, by) {
+  const day = 864e5, now = Date.now(), d = n => new Date(now + n * day).toISOString().slice(0, 10);
+  const W = async (c, o) => { const id = rid(); await store.writeDoc(c, id, { id, by, at: now - Math.random() * 6 * day, upd: now, ...o }); };
+  const ids = (await store.readCol('s_users')).map(u => u.id); const pick = (n, o = 0) => ids.length ? ids.slice(o, o + n).join(',') || by : by;
+  const C = [['لجنة الجداول والاختبارات', 'تنظيم الجداول الدراسية ومواعيد الاختبارات ومتابعة رصد الدرجات.', '#3B82F6'], ['لجنة الجودة والتطوير', 'متابعة مؤشرات الأداء وخطط التحسين وتجهيز ملفات الجودة.', '#34C38F'], ['لجنة الإرشاد الأكاديمي', 'متابعة الطلاب المتعثرين وتوزيع المرشدين والساعات المكتبية.', '#F2B54E'], ['لجنة الأنشطة والشراكات', 'تنظيم الأنشطة الطلابية والفعاليات والشراكات مع المجتمع.', '#A78BFA']];
+  const comIds = [];
+  for (const [name, mission, color] of C) { const id = rid(); comIds.push(id); await store.writeDoc('s_com', id, { id, name, mission, color, chair: by, members: pick(3, comIds.length - 1), by, at: now, upd: now }); }
+  const M = [['اجتماع مجلس القسم الدوري', 2, '10:00', 'قاعة الاجتماعات', '', 'مجدول', '1. متابعة خطة الفصل\n2. الطلبات المعلقة\n3. ما يستجد'], ['اجتماع لجنة الجداول', 5, '11:30', 'عن بُعد', comIds[0], 'مجدول', '1. مسودة جدول الاختبارات النهائية'], ['اجتماع لجنة الجودة', -4, '09:00', 'مكتب رئيس القسم', comIds[1], 'منعقد', '1. مراجعة مؤشرات الفصل']];
+  for (const [title, dd, time, place, com, status, agenda] of M) await W('s_meet', { title, date: d(dd), time, place, com, status, agenda, attendees: pick(4), minutes: status === 'منعقد' ? 'تمت مراجعة المؤشرات، والاتفاق على رفع نسبة إنجاز المهام قبل نهاية الشهر.' : '' });
+  const DC = [['تفعيل المتابعة الإلكترونية لأعمال القسم', '12/1448', -20, 200], ['مواعيد رفع درجات أعمال الفصل', '15/1448', -8, 30], ['تشكيل فريق متابعة مؤشرات الأداء', '18/1448', -2, 365]];
+  for (const [title, no, ago, dur] of DC) await W('s_dec', { title, no, date: d(ago), until: d(ago + dur), body: 'نص القرار يُكتب هنا بإيجاز، مع تاريخ السريان والجهات المعنية بالتنفيذ.', audience: 'جميع منسوبي القسم' });
+  await W('s_let', { subject: 'طلب تكليف أستاذ متعاون', to: 'سعادة عميد الكلية', body: 'السلام عليكم ورحمة الله وبركاته،\n\nنفيد سعادتكم بحاجة القسم إلى تكليف أستاذ متعاون لتدريس المقررات الشاغرة للفصل القادم، ونأمل التكرم بالموافقة.\n\nوتقبلوا خالص التحية والتقدير.', status: 'مسودة' });
+  await W('s_let', { subject: 'إفادة بإنهاء المهام', to: 'من يهمه الأمر', body: 'يفيد القسم بأن صاحب الطلب قد أنهى المهام المكلف بها خلال الفصل الدراسي.\n\nوقد أعطيت له هذه الإفادة بناءً على طلبه.', status: 'معتمد', signedBy: by, signedAt: now - day, no: 'خ/2026/214' });
+  const PO = [['مدة الرد على الطلبات', 'الطلبات', 'يُرد على كل طلب خلال ثلاثة أيام عمل من وصوله إلى كل مرحلة، وإذا تجاوزها يظهر تنبيه تلقائي للمسؤول.'], ['مسار اعتماد الطلبات', 'الطلبات', 'يمر الطلب برئيس القسم ثم العميد. يجوز إعادة الطلب لصاحبه للاستكمال مع ذكر السبب.'], ['إسناد المهام ومتابعتها', 'المهام', 'لكل مهمة مسؤول واحد وموعد محدد. يحدّث المسؤول نسبة الإنجاز أسبوعياً على الأقل.'], ['محاضر الاجتماعات', 'الاجتماعات', 'يُرفع المحضر خلال يومين من الاجتماع، وتُحوَّل كل توصية إلى مهمة بمسؤول وموعد.'], ['توقيع الخطابات', 'الخطابات', 'لا يصدر الخطاب إلا بعد اعتماده من صاحب الصلاحية، ويُحفظ برقم وتاريخ.']];
+  for (const [title, cat, body] of PO) await W('s_pol', { title, cat, body });
 }
