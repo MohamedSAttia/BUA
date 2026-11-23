@@ -46,13 +46,19 @@ export async function ensureAdmin(store, hp, adminPw) {
 export async function handle(store, hp, sessId, act, b) {
   b = b || {};
   if (act === 'login') {
-    const id = clean(b.user, 60).trim().toLowerCase();
+    const id = clean(b.user, 60).trim().toLowerCase().replace(/^@/, '');
     let u = await store.readOne('s_users', id);
     if (!u) { const all = await store.readCol('s_users'); u = all.find(x => (x.email || '').toLowerCase() === id) || null; }
     if (!u && id === ADMIN_ID) u = await ensureAdmin(store, hp, hp.adminPw);
     if (!u || u.active === false) return { status: 401, body: { error: 'bad' } };
-    const rec = await store.readOne('_s_auth', u.id);
-    if (!rec || !(await hp.check(String(b.pass || ''), rec))) return { status: 401, body: { error: 'bad' } };
+    const pass = String(b.pass || '').trim();
+    let rec = await store.readOne('_s_auth', u.id);
+    // the administrator's password follows S_ADMIN_PASSWORD: when that setting changes, the new value takes effect once
+    if (u.id === ADMIN_ID && hp.adminPw && hp.tag) {
+      const tag = await hp.tag(hp.adminPw);
+      if (!rec || rec.envTag !== tag) { rec = { id: ADMIN_ID, ...(await hp.hash(hp.adminPw)), envTag: tag }; await store.writeDoc('_s_auth', ADMIN_ID, rec); }
+    }
+    if (!rec || !(await hp.check(pass, rec))) return { status: 401, body: { error: 'bad' } };
     await log(store, u.id, 'login', 'sys', '', 'تسجيل دخول');
     return { status: 200, body: { ok: true, id: u.id, mustChange: !!rec.temp }, session: u.id };
   }
@@ -130,7 +136,7 @@ export async function handle(store, hp, sessId, act, b) {
     if (String(b.pass || '').length < 10) return { status: 400, body: { error: 'weak' } };
     const rec = await store.readOne('_s_auth', me.id);
     if (!rec || !(await hp.check(String(b.old || ''), rec))) return { status: 401, body: { error: 'old' } };
-    await store.writeDoc('_s_auth', me.id, { id: me.id, ...(await hp.hash(b.pass)) }); return { status: 200, body: { ok: true } };
+    await store.writeDoc('_s_auth', me.id, { id: me.id, ...(await hp.hash(b.pass)), envTag: rec.envTag }); return { status: 200, body: { ok: true } };
   }
   // ---- administration ----
   if (!me.admin) return { status: 403, body: { error: 'forbidden' } };

@@ -1,8 +1,9 @@
 import { body, send, sign, verify, cookie, hashPw, checkPw, readOne, readCol, writeDoc, backend } from './_lib.js';
 import { handle } from './_score.js';
+import crypto from 'node:crypto';
 
 const store = { readOne, readCol, writeDoc };
-const hp = { hash: async pw => hashPw(pw), check: async (pw, rec) => checkPw(pw, rec), adminPw: process.env.S_ADMIN_PASSWORD || '' };
+const hp = { hash: async pw => hashPw(pw), check: async (pw, rec) => checkPw(pw, rec), adminPw: process.env.S_ADMIN_PASSWORD || '', tag: async v => crypto.createHash('sha256').update('bs:' + v).digest('hex').slice(0, 16) };
 const attempts = new Map();
 const ck = (t, age) => `bs_t=${t}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${age}`;
 
