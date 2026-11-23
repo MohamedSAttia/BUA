@@ -19,5 +19,5 @@ export default async function handler(req, res) {
     if (act === 'login') { const k = ip + '|' + String(b.user).toLowerCase(); if (r.status === 200) attempts.delete(k); else attempts.set(k, (attempts.get(k) || 0) + 1); }
     if ('session' in r) res.setHeader('Set-Cookie', r.session ? ck(sign({ sid: r.session }, 60 * 60 * 12), 60 * 60 * 12) : ck('', 0));
     return send(res, r.status, r.body);
-  } catch (e) { return send(res, 500, { error: 'server', detail: String(e.message || e) }); }
+  } catch (e) { console.error('api/s', act, e); return send(res, 500, { error: 'server', detail: String(e.message || e) }); }
 }

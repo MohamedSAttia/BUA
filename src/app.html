@@ -191,7 +191,7 @@ const pending=()=>(D.req||[]).filter(r=>PENDING.includes(r.status));
 const kBad=k=>{const t=+k.target,a=+k.actual;return isFinite(t)&&isFinite(a)&&k.actual!==''&&(k.better==='low'?a>t:a<t)};
 const kPct=k=>{const t=+k.target,a=+k.actual;if(!t)return 0;return Math.max(0,Math.min(100,Math.round(k.better==='low'?(t/Math.max(a,.0001))*100:(a/t)*100)))};
 function toast(t,bad){const e=document.createElement('div');e.className='toast';if(bad){e.style.background='var(--bad)';e.style.color='#fff'}e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2800)}
-const errMsg=e=>({forbidden:'ليست لديك صلاحية لهذا الإجراء',weak:'كلمة المرور يجب ألا تقل عن 10 أحرف',old:'كلمة المرور الحالية غير صحيحة',bad:'اسم المستخدم أو كلمة المرور غير صحيحة',too_many:'محاولات كثيرة، حاول بعد قليل',no_storage:'قاعدة البيانات غير مفعّلة على الخادم',pass:'اكتب كلمة مرور للمستخدم الجديد',id:'اسم الدخول غير صالح'}[e.message]||'حدث خطأ، حاول مرة أخرى');
+const errMsg=e=>({forbidden:'ليست لديك صلاحية لهذا الإجراء',weak:'كلمة المرور يجب ألا تقل عن 10 أحرف',old:'كلمة المرور الحالية غير صحيحة',bad:'اسم المستخدم أو كلمة المرور غير صحيحة',too_many:'محاولات كثيرة، حاول بعد قليل',no_storage:'قاعدة البيانات غير مفعّلة على الخادم',pass:'اكتب كلمة مرور للمستخدم الجديد',id:'اسم الدخول غير صالح'}[e.message]||('حدث خطأ، حاول مرة أخرى'+(e.j&&e.j.detail?' ('+String(e.j.detail).slice(0,80)+')':'')));
 async function load(){try{D=await API('boot');render()}catch(e){D=null;renderLogin(e.code===401?'':errMsg(e))}}
 const credit='إعداد وفكرة وتصميم: د. خالد البلوي — جميع الحقوق محفوظة © 2026';
 

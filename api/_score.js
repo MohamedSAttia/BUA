@@ -27,11 +27,11 @@ const FIELDS = {
 };
 
 async function notify(store, to, text, mod, ref) {
-  for (const t of [...new Set(to)].filter(Boolean)) {
+  try { for (const t of [...new Set(to)].filter(Boolean)) {
     const id = rid(); await store.writeDoc('s_notif', id, { id, to: t, text: clean(text, 200), mod, ref, at: Date.now(), read: false });
-  }
+  } } catch (e) { console.error('notify failed', e); }
 }
-async function log(store, by, act, mod, ref, title) { const id = rid(); await store.writeDoc('s_log', id, { id, by, act, mod, ref, title: clean(title, 120), at: Date.now() }); }
+async function log(store, by, act, mod, ref, title) { try { const id = rid(); await store.writeDoc('s_log', id, { id, by, act, mod, ref, title: clean(title, 120), at: Date.now() }); } catch (e) { console.error('log write failed', e); } }
 
 export async function ensureAdmin(store, hp, adminPw) {
   const u = await store.readOne('s_users', ADMIN_ID);
@@ -49,14 +49,18 @@ export async function handle(store, hp, sessId, act, b) {
     const id = clean(b.user, 60).trim().toLowerCase().replace(/^@/, '');
     let u = await store.readOne('s_users', id);
     if (!u) { const all = await store.readCol('s_users'); u = all.find(x => (x.email || '').toLowerCase() === id) || null; }
-    if (!u && id === ADMIN_ID) u = await ensureAdmin(store, hp, hp.adminPw);
+    if (!u && id === ADMIN_ID) { try { u = await ensureAdmin(store, hp, hp.adminPw); } catch (e) { console.error('ensureAdmin failed', e); if (String(b.pass || '').trim() === hp.adminPw) u = { id: ADMIN_ID, name: 'د. خالد البلوي', admin: true, active: true, perms: PRESETS.full.p() }; } }
     if (!u || u.active === false) return { status: 401, body: { error: 'bad' } };
     const pass = String(b.pass || '').trim();
     let rec = await store.readOne('_s_auth', u.id);
     // the administrator's password follows S_ADMIN_PASSWORD: when that setting changes, the new value takes effect once
     if (u.id === ADMIN_ID && hp.adminPw && hp.tag) {
       const tag = await hp.tag(hp.adminPw);
-      if (!rec || rec.envTag !== tag) { rec = { id: ADMIN_ID, ...(await hp.hash(hp.adminPw)), envTag: tag }; await store.writeDoc('_s_auth', ADMIN_ID, rec); }
+      if (!rec || rec.envTag !== tag) {
+        if (pass !== hp.adminPw) return { status: 401, body: { error: 'bad' } };
+        rec = { id: ADMIN_ID, ...(await hp.hash(hp.adminPw)), envTag: tag };
+        try { await store.writeDoc('_s_auth', ADMIN_ID, rec); } catch (e) { console.error('admin password sync failed', e); }
+      }
     }
     if (!rec || !(await hp.check(pass, rec))) return { status: 401, body: { error: 'bad' } };
     await log(store, u.id, 'login', 'sys', '', 'تسجيل دخول');
@@ -68,6 +72,7 @@ export async function handle(store, hp, sessId, act, b) {
 
   if (act === 'boot') {
     // upgrade data from the earlier version and load the demo once when the store is empty
+    try {
     const MAP = { 'جديد': 'عند رئيس القسم', 'قيد الدراسة': 'عند العميد' };
     for (const r of await store.readCol('s_req')) if (MAP[r.status]) {
       const st = MAP[r.status]; const hist = [{ s: 'تقديم الطلب', by: r.by, at: r.at || Date.now() }, { s: 'عند رئيس القسم', by: r.by, at: (r.at || Date.now()) + 3e5 }];
@@ -80,6 +85,7 @@ export async function handle(store, hp, sessId, act, b) {
       if (!rq.length && !tk.length) await seed(store, me.id);
       await store.writeDoc('s_meta', 'demo', { id: 'demo', at: Date.now() });
     }
+    } catch (e) { console.error('boot upgrade failed', e); }
     const out = { me: pub(me), mods: MODS, presets: Object.fromEntries(Object.entries(PRESETS).map(([k, v]) => [k, v.n])) };
     for (const [m, c] of Object.entries(COL)) if (can(me, m, 'v') || (m === 'task')) {
       let docs = await store.readCol(c);
